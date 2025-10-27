@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header.html :: head (title='Admin - Settings')}"></head>
+<body>
+<div th:insert="~{fragments/navbar.html :: navbar(role='ADMIN')}"></div>
+
+<div class="container mt-4" sec:authorize="hasRole('ADMIN')">
+  <h2>Admin Settings</h2>
+  <form th:action="@{/admin/settings}" th:object="${adminDTO}" method="post">
+    <div class="mb-3">
+      <label for="name" class="form-label">Full Name</label>
+      <input type="text" class="form-control" id="name" th:field="*{name}" required>
+    </div>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" class="form-control" id="email" th:field="*{email}" required>
+    </div>
+    <div class="mb-3">
+      <label for="phone" class="form-label">Phone</label>
+      <input type="tel" class="form-control" id="phone" th:field="*{phone}">
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">New Password (leave blank to keep current)</label>
+      <input type="password" class="form-control" id="password" th:field="*{password}">
+    </div>
+    <button type="submit" class="btn btn-primary">Update Settings</button>
+  </form>
+
+  <div th:if="${success}" class="alert alert-success mt-3">Settings updated!</div>
+  <a th:href="@{/admin/homepage}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+</div>
+
+<div th:replace="~{fragments/footer.html}"></div>
+<link th:href="@{/css/admin.css}" rel="stylesheet">
+</body>
+</html>

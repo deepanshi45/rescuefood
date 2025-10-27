@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header.html :: head (title='Explore Food Rescues')}"></head>
+<body>
+<div th:insert="~{fragments/navbar.html :: navbar(role='USER')}"></div>
+
+<div class="container mt-4">
+    <h2>Explore Available Food</h2>
+    <form th:action="@{/user/explore}" method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" class="form-control" name="keyword" placeholder="Search by food type or location..." th:value="${param.keyword}">
+            <button class="btn btn-outline-secondary" type="submit">Search</button>
+        </div>
+    </form>
+
+    <div th:if="${foods.isEmpty()}" class="alert alert-info">No food items found.</div>
+    <div class="row">
+        <div th:each="food : ${foods}" class="col-md-4 mb-3">
+            <div class="card">
+                <img th:src="${food.imageUrl ?: '/images/food1.jpg'}" class="card-img-top" alt="Food">
+                <div class="card-body">
+                    <h5 th:text="${food.title}">Title</h5>
+                    <p th:text="${food.description}">Desc</p>
+                    <p class="text-muted">Location: <span th:text="${food.location}">Loc</span></p>
+                    <a th:href="@{/food/view/{id}(id=${food.id})}" class="btn btn-success">Rescue Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination (implement in controller) -->
+    <nav th:if="${totalPages > 1}" aria-label="Pagination">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}">
+                <a class="page-link" th:href="@{/user/explore(page=${i})}" th:text="${i}">1</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div th:replace="~{fragments/footer.html}"></div>
+<link th:href="@{/css/home.css}" rel="stylesheet">
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="hamburger-menu(role)" class="hamburger-menu d-lg-none" id="mobileMenu">
+  <div class="menu-overlay"></div>
+  <ul class="mobile-nav">
+    <li><a href="/user/home"><i class="fas fa-home"></i> Home</a></li>
+    <li><a href="/user/explore"><i class="fas fa-search"></i> Explore</a></li>
+    <th:block th:if="${role == 'USER'}">
+      <li><a href="/user/profile"><i class="fas fa-user"></i> Profile</a></li>
+    </th:block>
+    <th:block th:if="${role == 'ADMIN'}">
+      <li><a href="/admin/addfood"><i class="fas fa-plus"></i> Add Food</a></li>
+      <li><a href="/admin/history"><i class="fas fa-history"></i> History</a></li>
+    </th:block>
+    <li><a href="/about"><i class="fas fa-info"></i> About</a></li>
+    <li><a href="/user/login" th:if="${#authorization.expression('!isAuthenticated()')}"><i class="fas fa-sign-in"></i> Login</a></li>
+    <li><a href="/logout" th:if="${#authorization.expression('isAuthenticated()')}"><i class="fas fa-sign-out"></i> Logout</a></li>
+  </ul>
+
+  <!-- Hamburger Menu CSS (embedded; extract to navbar.css or separate) -->
+  <style>
+    .hamburger-menu {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100vh;
+        background-color: rgba(40, 167, 69, 0.95);
+        z-index: 1050;
+        transition: left 0.4s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .hamburger-menu.active {
+        left: 0;
+        animation: slideInMenu 0.4s ease-out;
+    }
+
+    @keyframes slideInMenu {
+        from { left: -100%; opacity: 0; }
+        to { left: 0; opacity: 1; }
+    }
+
+    .menu-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: -1;
+    }
+
+    .mobile-nav {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        text-align: center;
+    }
+
+    .mobile-nav li {
+        margin: 20px 0;
+        opacity: 0;
+        transform: translateX(-20px);
+        animation: slideInItem 0.5s ease-out forwards;
+    }
+
+    .mobile-nav li:nth-child(1) { animation-delay: 0.1s; }
+    .mobile-nav li:nth-child(2) { animation-delay: 0.2s; }
+    .mobile-nav li:nth-child(3) { animation-delay: 0.3s; }
+    /* Add more delays as needed */
+
+    @keyframes slideInItem {
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .mobile-nav a {
+        color: white;
+        text-decoration: none;
+        font-size: 1.2rem;
+        padding: 10px 20px;
+        display: block;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .mobile-nav a:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        transform: scale(1.05);
+    }
+
+    /* Toggle Button (add to navbar.html if needed) */
+    .hamburger-toggle {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: white;
+    }
+  </style>
+
+  <!-- Optional JS for Toggle (embed in script.js) -->
+  <script>
+    // Example toggle (call on hamburger click)
+    function toggleHamburger() {
+        document.getElementById('mobileMenu').classList.toggle('active');
+    }
+  </script>
+</div>
+</html>
