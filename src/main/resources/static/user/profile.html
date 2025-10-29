@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    /* Similar CSS as above */
+    :root { --primary-color: #28a745; --shadow-light: 0 4px 15px rgba(40, 167, 69, 0.1); --card-bg: rgba(255, 255, 255, 0.95); }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideInDownSmooth { from { opacity: 0; transform: translateY(-60px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .animate-fade-in { animation: fadeInUp 1s ease-out forwards; }
+    .animate-slide-in-down { animation: slideInDownSmooth 0.8s ease-out forwards; }
+    body { background: linear-gradient(to bottom, #f8f9fa, #e9ecef); font-family: 'Segoe UI', sans-serif; }
+    .container { background: var(--card-bg); border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-top: 20px; animation: fadeInUp 1s ease-out; }
+    .profile-card { background: var(--card-bg); padding: 20px; border-radius: 15px; box-shadow: var(--shadow-light); animation: slideInDownSmooth 0.8s ease-out forwards; }
+    .hamburger { cursor: pointer; font-size: 24px; transition: transform 0.3s ease; }
+    .hamburger:hover { transform: scale(1.1); }
+    .menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 999; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
+    .menu-overlay.active { opacity: 1; visibility: visible; }
+    .menu { position: fixed; top: 0; left: -300px; width: 300px; height: 100%; background-color: #fff; box-shadow: 2px 0 5px rgba(0,0,0,0.1); transition: left 0.3s ease; z-index: 1000; padding: 20px; }
+    .menu.active { left: 0; }
+    .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background-color: #fff; box-shadow: 0 -2px 5px rgba(0,0,0,0.1); display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; }
+    .nav-item { text-align: center; flex: 1; cursor: pointer; transition: background-color 0.3s ease; }
+    .nav-item:hover { background-color: #f0f0f0; }
+    .nav-item i { font-size: 24px; display: block; margin-bottom: 5px; }
+    .nav-item span { font-size: 12px; }
+    @media (max-width: 600px) { .menu { width: 250px; } }
+  </style>
+</head>
+<body>
+<header style="background-color: #fff; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+  <div class="hamburger" id="hamburger">☰</div>
+  <div style="font-size: 24px; font-weight: bold;">User App</div>
+</header>
+
+<div class="container mt-4 animate-fade-in">
+  <h2 class="animate-slide-in-down">Your Profile</h2>
+  <div class="profile-card">
+    <h5>Name: John Doe</h5>
+    <p>Email: john@example.com</p>
+    <p>Location: New York</p>
+    <button class="btn btn-primary">Edit Profile</button>
+  </div>
+</div>
+
+<div class="menu-overlay" id="menuOverlay">
+  <div class="menu" id="menu">
+    <h2>Menu</h2>
+    <div class="search-bar">
+      <input type="text" class="form-control" placeholder="Search files, items, or settings...">
+      <button type="button" class="btn btn-primary mt-2" style="width: 100%;">Search</button>
+    </div>
+    <ul style="list-style: none; padding: 0;">
+      <li style="margin-bottom: 15px;"><a href="#" style="text-decoration: none; color: #333;">Files</a></li>
+      <li style="margin-bottom: 15px;"><a href="#" style="text-decoration: none; color: #333;">About Us</a></li>
+      <li style="margin-bottom: 15px;"><a href="#" style="text-decoration: none; color: #333;">Order</a></li>
+      <li style="margin-bottom: 15px;"><a href="#" style="text-decoration: none; color: #333;">Profile</a></li>
+      <li style="margin-bottom: 15px;"><a href="#" style="text-decoration: none; color: #333;">Settings</a></li>
+    </ul>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <div class="nav-item"><i>🏠</i><span>Home</span></div>
+  <div class="nav-item"><i>🛒</i><span>Cart</span></div>
+  <div class="nav-item"><i>🔍</i><span>Explore</span></div>
+  <div class="nav-item"><i>📦</i><span>Order</span></div>
+</nav>
+
+<script>
+  const hamburger = document.getElementById('hamburger');
+  const menuOverlay = document.getElementById('menuOverlay');
+  const menu = document.getElementById('menu');
+  hamburger.addEventListener('click', () => {
+      menuOverlay.classList.toggle('active');
+      menu.classList.toggle('active');
+  });
+  menuOverlay.addEventListener('click', (e) => {
+      if (e.target === menuOverlay) {
+          menuOverlay.classList.remove('active');
+          menu.classList.remove('active');
+      }
+  });
+</script>
+</body>
+</html>
