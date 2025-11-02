@@ -1,9 +1,5 @@
 package com.example.login.model;
 
-// src/main/java/com/example/foodrescue/entity/Notification.java
-
-
-
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -17,21 +13,22 @@ public class Notification {
 
     @Column(name = "user_id")
     private Long userId;
+
     @Column(nullable = false, columnDefinition = "TEXT")
     private String message;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private NotificationType type; // e.g., CLAIMED, EXPIRED, NEW_FOOD, FEEDBACK_RESPONSE
+    private NotificationType type; // e.g., CLAIMED, EXPIRED, NEW_FOOD
 
     @Column(nullable = false)
-    private String recipientUsername; // Username of User or Admin who receives it
+    private String recipientUsername;
 
     @Column(nullable = false)
-    private boolean isRead= false;
+    private boolean isRead = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "related_food_id") // Optional: link to FoodItem if notification is about a food
+    @JoinColumn(name = "related_food_id")
     private Fooditem relatedFood;
 
     @Column(name = "created_at")
@@ -69,6 +66,14 @@ public class Notification {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getMessage() {
@@ -127,9 +132,3 @@ public class Notification {
         this.updatedAt = updatedAt;
     }
 }
-
-// Supporting enum (add in the same package or a separate enums package)
-enum NotificationType {
-    NEW_FOOD_AVAILABLE, FOOD_CLAIMED, FOOD_EXPIRED, FEEDBACK_RECEIVED, ADMIN_APPROVAL
-}
-

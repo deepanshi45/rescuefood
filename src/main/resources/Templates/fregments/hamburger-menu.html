@@ -9,8 +9,8 @@
       <li><a href="/user/profile"><i class="fas fa-user"></i> Profile</a></li>
     </th:block>
     <th:block th:if="${role == 'ADMIN'}">
-      <li><a href="/admin/addfood"><i class="fas fa-plus"></i> Add Food</a></li>
-      <li><a href="/admin/history"><i class="fas fa-history"></i> History</a></li>
+      <li><a href="/Templates/admin/addfood"><i class="fas fa-plus"></i> Add Food</a></li>
+      <li><a href="/Templates/admin/history"><i class="fas fa-history"></i> History</a></li>
     </th:block>
     <li><a href="/about"><i class="fas fa-info"></i> About</a></li>
     <li><a href="/user/login" th:if="${#authorization.expression('!isAuthenticated()')}"><i class="fas fa-sign-in"></i> Login</a></li>

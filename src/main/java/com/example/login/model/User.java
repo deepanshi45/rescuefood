@@ -12,7 +12,7 @@ public class User {
     private Long id;
 
     @Column(nullable = false)
-    private String name;  // Added name field properly
+    private String name;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -25,6 +25,8 @@ public class User {
 
     private String phone;
     private String address;
+
+    private String role; // Added missing field
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -54,6 +56,7 @@ public class User {
         this.password = password;
         this.phone = phone;
         this.address = address;
+        this.role = "USER"; // Default role
     }
 
     // Getters and Setters
@@ -129,9 +132,13 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    public void setRole(String user) {
-        // Implement if needed later
+    // Fixed setter
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    // Added getter
+    public String getRole() {
+        return this.role;
     }
 }
-
-

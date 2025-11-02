@@ -1,7 +1,5 @@
 package com.example.login.service;
 
-
-
 import com.example.login.dto.UserDTO;
 import com.example.login.dto.AdminDTO;
 import com.example.login.model.User;
@@ -22,23 +20,30 @@ public class AuthService {
     @Autowired
     private AdminRepository adminRepository;
 
+    // You should define the passwordEncoder as a Bean in a SecurityConfig class
+    // But for simplicity, we instantiate it here.
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     // User signup
-    public User signupUser (UserDTO userDTO) {
+    public User signupUser(UserDTO userDTO) {
         if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
-            throw new RuntimeException("User  already exists with email: " + userDTO.getEmail());
+            throw new RuntimeException("User already exists with email: " + userDTO.getEmail());
         }
+        if (userRepository.findByUsername(userDTO.getUsername()).isPresent()) {
+            throw new RuntimeException("User already exists with username: " + userDTO.getUsername());
+        }
+
         User user = new User();
-        user.setId(Long.valueOf(userDTO.getName()));
+        user.setName(userDTO.getName()); // Fixed
+        user.setUsername(userDTO.getUsername()); // Added
         user.setEmail(userDTO.getEmail());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         user.setRole("USER");
         return userRepository.save(user);
     }
 
-    // User login (returns user if credentials match)
-    public Optional<User> loginUser (String email, String password) {
+    // User login
+    public Optional<User> loginUser(String email, String password) {
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent() && passwordEncoder.matches(password, user.get().getPassword())) {
             return user;
@@ -51,8 +56,10 @@ public class AuthService {
         if (adminRepository.findByEmail(adminDTO.getEmail()).isPresent()) {
             throw new RuntimeException("Admin already exists with email: " + adminDTO.getEmail());
         }
+
         Admin admin = new Admin();
         admin.setName(adminDTO.getName());
+        admin.setUsername(adminDTO.getEmail()); // Using email as username for admin, or add username to AdminDTO
         admin.setEmail(adminDTO.getEmail());
         admin.setPassword(passwordEncoder.encode(adminDTO.getPassword()));
         admin.setRole("ADMIN");
@@ -68,4 +75,3 @@ public class AuthService {
         return Optional.empty();
     }
 }
-

@@ -1,7 +1,5 @@
 package com.example.login.Controller;
 
-
-
 import com.example.login.model.Notification;
 import com.example.login.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-public class  NotificationController {
+public class NotificationController {
 
     @Autowired
     private NotificationService notificationService;
@@ -20,23 +18,24 @@ public class  NotificationController {
     @PostMapping("/notifications/send")
     public String sendNotification(@ModelAttribute Notification notification, Model model) {
         try {
-            Notification sent = notificationService.sendNotification(notification);
+            notificationService.sendNotification(notification);
             model.addAttribute("message", "Notification sent");
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());
         }
-        return "redirect:/admin/notifications"; // Or user notifications
+        return "redirect:/admin/notification"; // Renders templates/admin/notification.html
     }
 
     // View user notifications
     @GetMapping("/user/notifications")
     public String userNotifications(Model model) {
-        Long userId = 1L; // From session
+        // FIXME: Replace 1L with ID from authenticated user session
+        Long userId = 1L;
         List<Notification> notifications = notificationService.getUserNotifications(userId);
         long unreadCount = notificationService.getUnreadCount(userId);
         model.addAttribute("notifications", notifications);
         model.addAttribute("unreadCount", unreadCount);
-        return "user/notifications"; // Assume user/notifications.html or reuse admin one
+        return "user/notifications"; // Renders templates/user/notifications.html
     }
 
     // Mark as read
@@ -49,7 +48,8 @@ public class  NotificationController {
     // Delete notification
     @PostMapping("/notifications/{id}/delete")
     public String deleteNotification(@PathVariable Long id) {
-        Long userId = 1L; // From session
+        // FIXME: Replace 1L with ID from authenticated user session
+        Long userId = 1L;
         try {
             notificationService.deleteNotification(id, userId);
         } catch (RuntimeException e) {
@@ -58,4 +58,3 @@ public class  NotificationController {
         return "redirect:/user/notifications";
     }
 }
-

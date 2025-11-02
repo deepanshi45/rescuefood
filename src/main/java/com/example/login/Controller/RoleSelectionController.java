@@ -16,7 +16,7 @@ public class  RoleSelectionController {
 
         @GetMapping("/role-select/admin")
         public String adminLoginRedirect() {
-            return "admin/admin-login";
+            return "Templates/admin/admin-login";
         }
 
         @GetMapping("/role-select/user")

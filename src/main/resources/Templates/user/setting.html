@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments/header :: head (title='User - Settings')}"></head>
+
+<style>
+  /* 🌈 Modern Gradient Background */
+  body {
+    background: linear-gradient(135deg, #d1f7ff, #eafaf1);
+    font-family: 'Poppins', sans-serif;
+    color: #2f2f2f;
+    min-height: 100vh;
+  }
+
+  .hero-section {
+    text-align: center;
+    margin-top: 30px;
+    animation: fadeIn 1s ease-in-out;
+  }
+
+  .hero-section img {
+    width: 130px;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .hero-section h2 {
+    margin-top: 10px;
+    color: #00796b;
+    font-weight: 700;
+  }
+
+  .hero-section p {
+    color: #004d40;
+    font-weight: 500;
+  }
+
+  /* ⚙️ Settings Card */
+  .settings-card {
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    padding: 35px;
+    transition: all 0.4s ease;
+    margin-top: 25px;
+  }
+
+  .settings-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #00695c;
+    font-weight: 600;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+  }
+
+  .section-title img {
+    width: 30px;
+  }
+
+  label {
+    font-weight: 500;
+    color: #00695c;
+  }
+
+  .form-control {
+    border: 2px solid #b2dfdb;
+    border-radius: 10px;
+    transition: 0.3s;
+  }
+
+  .form-control:focus {
+    border-color: #009688;
+    box-shadow: 0 0 8px rgba(0, 150, 136, 0.3);
+  }
+
+  .btn-save {
+    background-color: #009688;
+    border: none;
+    color: #fff;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .btn-save:hover {
+    background-color: #00796b;
+    transform: scale(1.05);
+  }
+
+  /* 🌊 Animations */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<body>
+
+<!-- ✅ Navbar Fragment -->
+<div th:replace="~{fragments/navbar :: navbar(role='USER')}"></div>
+
+<!-- ⚙️ Settings Section -->
+<div class="container" sec:authorize="hasRole('USER')">
+
+  <div class="hero-section">
+    <!-- 🔧 Modern Settings Illustration -->
+    <img src="https://cdn-icons-png.flaticon.com/512/1177/1177568.png" alt="Settings Illustration">
+    <h2>Account Settings</h2>
+    <p>Manage your Food Rescue account securely and easily</p>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="settings-card">
+
+        <div class="section-title">
+          <img src="https://cdn-icons-png.flaticon.com/512/3064/3064197.png" alt="Lock Icon">
+          Change Password
+        </div>
+
+        <form th:action="@{/user/settings/update-password}" method="post">
+
+          <div class="mb-3">
+            <label for="currentPassword" class="form-label">Current Password</label>
+            <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="newPassword" class="form-label">New Password</label>
+            <input type="password" class="form-control" id="newPassword" name="newPassword" required minlength="6">
+          </div>
+
+          <div class="mb-3">
+            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+          </div>
+
+          <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-save">Save Changes</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ✅ Footer Fragment -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

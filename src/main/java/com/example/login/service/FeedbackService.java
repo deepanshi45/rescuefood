@@ -1,7 +1,5 @@
 package com.example.login.service;
 
-
-
 import com.example.login.model.Feedback;
 import com.example.login.repository.FeedbackRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +15,10 @@ public class FeedbackService {
 
     // Submit feedback
     public Feedback submitFeedback(Feedback feedback) {
-        // Basic validation: ensure message is not empty
         if (feedback.getMessage() == null || feedback.getMessage().trim().isEmpty()) {
             throw new RuntimeException("Feedback message cannot be empty");
         }
-        feedback.setStatus("PENDING"); // Default status for review
+        feedback.setStatus("PENDING");
         return feedbackRepository.save(feedback);
     }
 
@@ -31,11 +28,12 @@ public class FeedbackService {
     }
 
     // Get feedback by user
-    public List<Feedback> getUserFeedbackService(Long userId) {
+    public List<Feedback> getUserFeedback(Long userId) {
+        // This was the incomplete method
         return feedbackRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
 
-    // Update feedback status (e.g., admin resolves it)
+    // Update feedback status
     public Feedback updateStatus(Long feedbackId, String status) {
         Optional<Feedback> feedback = feedbackRepository.findById(feedbackId);
         if (feedback.isPresent()) {
@@ -55,11 +53,4 @@ public class FeedbackService {
             throw new RuntimeException("Feedback not found or access denied");
         }
     }
-
-    public  List<Feedback>   getUserFeedback(Long userId) {
-        return List.of();
-    }
 }
-
-
-

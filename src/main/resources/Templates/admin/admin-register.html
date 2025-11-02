@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Signup | Food Rescue</title>
+    <style>
+        /* ... (rest of your CSS) ... */
+    </style>
+</head>
+<body>
+<form th:action="@{/admin/register}" th:object="${adminDTO}" method="post">
+    <h2>Admin Signup</h2>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <label>Name:</label>
+    <input type="text" th:field="*{name}" required>
+
+    <label>Email:</label>
+    <input type="email" th:field="*{email}" required>
+
+    <label>Password:</label>
+    <input type="password" th:field="*{password}" required>
+
+    <button type="submit">Register</button>
+    <p>Already have an account? <a th:href="@{/admin/login}">Login</a></p>
+    <p><a th:href="@{/}">⬅ Back</a></p>
+</form>
+</body>
+</html>

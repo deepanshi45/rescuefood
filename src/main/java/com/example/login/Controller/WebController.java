@@ -19,55 +19,55 @@ import org.springframework.web.bind.annotation.GetMapping;
                 return "role-select";
             }
 
-            @GetMapping("/login")
-            public String showLoginPage() {
-                return "login";
-            }
+//            @GetMapping("/login")
+//            public String showLoginPage() {
+//                return "login";
+//            }
 
             // ----------------- 👮 ADMIN PAGES -----------------
-            @GetMapping("/admin/dashboard")
+            @GetMapping("/Templates/admin/dashboard")
             public String adminDashboard() {
-                return "admin/admin-dashboard";
+                return "Templates/admin/admin-dashboard";
             }
 
-            @GetMapping("/admin/login")
+            @GetMapping("/Templates/admin/login")
             public String adminLogin() {
-                return "admin/admin-login";
+                return "Templates/admin/admin-login";
             }
 
-            @GetMapping("/admin/register")
+            @GetMapping("/Templates/admin/register")
             public String adminRegister() {
-                return "admin/admin-register";
+                return "Templates/admin/admin-register";
             }
 
-            @GetMapping("/admin/about")
+            @GetMapping("/Templates/admin/about")
             public String adminAbout() {
-                return "admin/about";
+                return "Templates/admin/about";
             }
 
-            @GetMapping("/admin/addfood")
+            @GetMapping("/Templates/admin/addfood")
             public String adminAddFood() {
-                return "admin/addfood";
+                return "Templates/admin/addfood";
             }
 
-            @GetMapping("/admin/explore")
+            @GetMapping("/Templates/admin/explore")
             public String adminExplore() {
-                return "admin/explore";
+                return "Templates/admin/explore";
             }
 
-            @GetMapping("/admin/history")
+            @GetMapping("/Templates/admin/history")
             public String adminHistory() {
-                return "admin/history";
+                return "Templates/admin/history";
             }
 
-            @GetMapping("/admin/notification")
+            @GetMapping("/Templates/admin/notification")
             public String adminNotification() {
-                return "admin/notification";
+                return "Templates/admin/notification";
             }
 
-            @GetMapping("/admin/settings")
+            @GetMapping("/Templates/admin/settings")
             public String adminSettings() {
-                return "admin/settings";
+                return "Templates/admin/settings";
             }
 
 

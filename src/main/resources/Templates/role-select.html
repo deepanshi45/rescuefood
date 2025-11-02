@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Select Role | Food Rescue</title>
+    <style>
+        /* Reset default styles */
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+        }
+        /* ... (rest of your CSS) ... */
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>Welcome to Food Rescue</h1>
+    <p>Select your role to continue</p>
+    <div class="role-buttons">
+        <a th:href="@{/user/login}" class="role-btn user-btn">User</a>
+
+        <a th:href="@{/admin/login}" class="role-btn admin-btn">Admin</a>
+    </div>
+</div>
+</body>
+</html>

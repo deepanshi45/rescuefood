@@ -1,8 +1,7 @@
 package com.example.login.service;
 
-
-
-
+import com.example.login.dto.FoodDTO;
+import com.example.login.model.FoodCategory;
 import com.example.login.model.FoodStatus;
 import com.example.login.model.Fooditem;
 import com.example.login.repository.FoodRepository;
@@ -19,13 +18,35 @@ public class FoodService {
     @Autowired
     private FoodRepository foodRepository;
 
-    // Post a new food item
-    public Fooditem postFood(Fooditem foodItem) {
-        // Validate: ensure expiry date is in the future
-        if (foodItem.getExpiryDate().isBefore(LocalDate.now())) {
+    // Post a new food item (Refined to accept DTO)
+    public Fooditem postFood(FoodDTO foodDTO) {
+        if (foodDTO.getExpiryDate().isBefore(LocalDate.now())) {
             throw new RuntimeException("Food item expiry date must be in the future");
         }
+
+        Fooditem foodItem = new Fooditem();
+        foodItem.setTitle(foodDTO.getTitle());
+        foodItem.setDescription(foodDTO.getDescription());
+        foodItem.setLocation(foodDTO.getLocation());
+
+        // Convert BigDecimal to Integer for quantity
+        if (foodDTO.getQuantity() != null) {
+            foodItem.setQuantity(foodDTO.getQuantity().intValue());
+        }
+
+        // Convert String category to Enum
+        try {
+            foodItem.setCategory(FoodCategory.valueOf(foodDTO.getCategory().toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid food category: " + foodDTO.getCategory());
+        }
+
+        foodItem.setExpiryDate(foodDTO.getExpiryDate());
         foodItem.setStatus(FoodStatus.AVAILABLE); // Default status
+
+        // FIXME: Set the user/admin who posted this
+        // foodItem.setPostedBy(adminRepository.findById(1L).get());
+
         return foodRepository.save(foodItem);
     }
 
@@ -45,7 +66,7 @@ public class FoodService {
         return foodRepository.findByDescriptionContainingIgnoreCaseOrLocationContainingIgnoreCase(query, query);
     }
 
-    // Claim or update food status (e.g., mark as claimed)
+    // Claim or update food status
     public Fooditem claimFood(Long foodId, Long userId) {
         Optional<Fooditem> food = foodRepository.findById(foodId);
         if (food.isPresent()) {
@@ -66,4 +87,3 @@ public class FoodService {
         return foodRepository.findById(id);
     }
 }
-

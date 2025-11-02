@@ -348,7 +348,7 @@
     <thead>
     <tr>
       <th>Food Item</th>
-      <th>User</th>
+      <th></th>
       <th>Date Rescued</th>
       <th>Status</th>
       <th>Actions</th>
@@ -357,7 +357,7 @@
     <tbody>
     <tr th:each="item : ${history}">
       <td th:text="${item.foodTitle}">Title</td>
-      <td th:text="${item.userName}">User </td>
+      <td th:text="${item.Name}"> </td>
       <td th:text="${item.rescueDate}">Date</td>
       <td>
         <span th:if="${item.status == 'COMPLETED'}" class="badge bg-success">Completed</span>

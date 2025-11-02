@@ -1,9 +1,6 @@
-
-
-
 package com.example.login.model;
-import jakarta.persistence.*;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -13,6 +10,9 @@ public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
+    private String name; // Added missing field
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -25,7 +25,9 @@ public class Admin {
 
     private String phone;
 
-    @Column(name = "admin_role") // e.g., "SUPER_ADMIN", "MODERATOR"
+    private String role; // Added field to store role
+
+    @Column(name = "admin_role")
     private String adminRole;
 
     @Column(name = "created_at")
@@ -49,12 +51,14 @@ public class Admin {
     public Admin() {}
 
     // Parameterized constructor
-    public Admin(String username, String email, String password, String phone, String adminRole) {
+    public Admin(String name, String username, String email, String password, String phone, String adminRole) {
+        this.name = name;
         this.username = username;
         this.email = email;
         this.password = password;
         this.phone = phone;
         this.adminRole = adminRole;
+        this.role = "ADMIN"; // Default role
     }
 
     // Getters and Setters
@@ -64,6 +68,16 @@ public class Admin {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    // Fixed getter
+    public String getName() {
+        return name;
+    }
+
+    // Fixed setter
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getUsername() {
@@ -122,15 +136,13 @@ public class Admin {
         this.updatedAt = updatedAt;
     }
 
-    public void setRole(String admin) {
+    // Fixed setter
+    public void setRole(String role) {
+        this.role = role;
     }
 
-    public Object getName() {
-        return null;
-    }
-
-    public void setName(Object name) {
+    // Fixed getter
+    public String getRole() {
+        return role;
     }
 }
-
-
