@@ -1,77 +1,67 @@
 package com.example.login.service;
 
-import com.example.login.dto.UserDTO;
 import com.example.login.dto.AdminDTO;
-import com.example.login.model.User;
+import com.example.login.dto.UserDTO;
 import com.example.login.model.Admin;
-import com.example.login.repository.UserRepository;
+import com.example.login.model.User;
 import com.example.login.repository.AdminRepository;
+import com.example.login.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.util.Optional;
 
 @Service
 public class AuthService {
 
     @Autowired
+    private AdminRepository adminRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
-    private AdminRepository adminRepository;
+    private PasswordEncoder passwordEncoder; // Injected from SecurityConfig
 
-    // You should define the passwordEncoder as a Bean in a SecurityConfig class
-    // But for simplicity, we instantiate it here.
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-    // User signup
-    public User signupUser(UserDTO userDTO) {
-        if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
-            throw new RuntimeException("User already exists with email: " + userDTO.getEmail());
-        }
-        if (userRepository.findByUsername(userDTO.getUsername()).isPresent()) {
-            throw new RuntimeException("User already exists with username: " + userDTO.getUsername());
-        }
-
-        User user = new User();
-        user.setName(userDTO.getName()); // Fixed
-        user.setUsername(userDTO.getUsername()); // Added
-        user.setEmail(userDTO.getEmail());
-        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        user.setRole("USER");
-        return userRepository.save(user);
-    }
-
-    // User login
-    public Optional<User> loginUser(String email, String password) {
-        Optional<User> user = userRepository.findByEmail(email);
-        if (user.isPresent() && passwordEncoder.matches(password, user.get().getPassword())) {
-            return user;
-        }
-        return Optional.empty();
-    }
-
-    // Admin signup
+    // ===================== ADMIN AUTH =====================
     public Admin signupAdmin(AdminDTO adminDTO) {
+        // 1️⃣ Check for duplicate email
         if (adminRepository.findByEmail(adminDTO.getEmail()).isPresent()) {
-            throw new RuntimeException("Admin already exists with email: " + adminDTO.getEmail());
+            throw new RuntimeException("Admin with this email already exists!");
         }
 
+        // 2️⃣ Map DTO to Entity
         Admin admin = new Admin();
         admin.setName(adminDTO.getName());
-        admin.setUsername(adminDTO.getEmail()); // Using email as username for admin, or add username to AdminDTO
         admin.setEmail(adminDTO.getEmail());
-        admin.setPassword(passwordEncoder.encode(adminDTO.getPassword()));
-        admin.setRole("ADMIN");
+        admin.setUsername(adminDTO.getEmail()); // ✅ Use email as username
+        admin.setPassword(passwordEncoder.encode(adminDTO.getPassword())); // ✅ Hash password
+        admin.setRole("ROLE_ADMIN");
+        admin.setAdminRole("DONOR"); // Optional internal role tag
+
+        // 3️⃣ Save to database
         return adminRepository.save(admin);
     }
 
-    // Admin login
-    public Optional<Admin> loginAdmin(String email, String password) {
-        Optional<Admin> admin = adminRepository.findByEmail(email);
-        if (admin.isPresent() && passwordEncoder.matches(password, admin.get().getPassword())) {
-            return admin;
+    // ===================== USER AUTH =====================
+    public User signupUser(UserDTO userDTO) {
+        // 1️⃣ Check for duplicate email
+        if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
+            throw new RuntimeException("User with this email already exists!");
         }
-        return Optional.empty();
+
+        // 2️⃣ Map DTO to Entity
+        User user = new User();
+        user.setName(userDTO.getName());
+        user.setUsername(userDTO.getUsername()); // Assuming username exists in DTO
+        user.setEmail(userDTO.getEmail());
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword())); // ✅ Hash password
+        user.setRole("ROLE_USER");
+
+        // 3️⃣ Save to database
+        return userRepository.save(user);
     }
+
+    // ❌ No manual login methods — Spring Security handles authentication
 }

@@ -1,35 +1,18 @@
 package com.example.login.repository;
 
-
-
-// src/main/java/com/example/foodrescue/repository/UserRepository.java
-
-
-
 import com.example.login.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
+import java.util.List; // 🆕 Added List import
 import java.util.Optional;
 
-@Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<User> findByUsername(String username);
-
+    // ✅ 1. Used for Authentication/Login and checking existence (used in UserService.findIdByEmail)
     Optional<User> findByEmail(String email);
 
-    boolean existsByUsername(String username);
-
-    boolean existsByEmail(String email);
-
-    @Query("SELECT u FROM User u WHERE u.username = :username")
-    Optional<User> getUserByUsername(@Param("username") String username);
-
+    // ✅ 2. Used for the search/explore functionality in UserService
     List<User> findByNameContainingIgnoreCase(String keyword);
+
+    // Optional: If you allow login by username too
+    // Optional<User> findByUsername(String username);
 }
-
-

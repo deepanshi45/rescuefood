@@ -1,96 +1,119 @@
+
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/header.html :: head (title='Admin - Add Food')}">
-  <!-- Additional admin-specific CSS -->
-  <link th:href="@{/css/admin.css}" rel="stylesheet">
-  <!-- Bootstrap Icons for button icons -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Post New Food</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    'food-green': '#16A34A',
+                    'food-orange': '#EA580C',
+                    'food-dark': '#14532D',
+                    'food-light': '#DCFCE7',
+                }
+            }
+        }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+  <style>body { font-family: 'Poppins', sans-serif; }</style>
 </head>
-<body>
-<div th:insert="~{fragments/navbar.html :: navbar(role='ADMIN')}"></div>
+<body class="bg-gradient-to-br from-food-light via-green-50 to-food-green text-gray-800">
 
-<div class="container mt-4 animate-fade-in" sec:authorize="hasRole('ADMIN')">
-  <!-- Success/Error Alerts -->
-  <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-    <i class="bi bi-check-circle me-2"></i>Food item added successfully!
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-  </div>
-  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" th:text="${error}">
-    <i class="bi bi-exclamation-triangle me-2"></i>Error occurred.
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-  </div>
+<header class="bg-white shadow-md py-4 px-6 sticky top-0 z-10 text-food-dark">
+  <nav class="flex justify-between items-center container mx-auto">
+    <h1 class="text-2xl font-semibold">Post Donation</h1>
+    <a th:href="@{/admin/dashboard}" class="text-food-green hover:text-food-dark transition font-medium">← Back to Dashboard</a>
+  </nav>
+</header>
 
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card shadow-lg animate-slide-in-down">
-        <div class="card-header bg-primary text-white text-center">
-          <h2 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Add New Food Item</h2>
+<main class="py-12 px-6 md:px-12">
+  <div class="container mx-auto max-w-4xl">
+    <div class="bg-white rounded-xl shadow-2xl p-8 border border-gray-200">
+      <h2 class="text-3xl font-bold text-food-dark text-center mb-8 flex items-center justify-center">
+        <i class="bi bi-plus-circle-fill mr-3"></i> List New Food Surplus
+      </h2>
+
+      <div th:if="${success}" class="p-3 bg-green-100 text-green-700 rounded-lg mb-4" th:text="${success}">Food item added successfully!</div>
+      <div th:if="${error}" class="p-3 bg-red-100 text-red-700 rounded-lg mb-4" th:text="${error}">Error occurred.</div>
+
+      <!-- Fixed Form: POST URL matches Controller -->
+      <form th:action="@{/admin/addfood}" th:object="${foodDTO}" method="post" enctype="multipart/form-data" class="space-y-6">
+
+        <div>
+          <input type="text" th:field="*{title}" placeholder="1. Item Title (e.g., 5KG Fresh Bread)" required
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-food-green focus:border-food-green">
+          <div th:if="${#fields.hasErrors('title')}" class="text-red-500 text-sm mt-1" th:errors="*{title}">Title Error</div>
         </div>
-        <div class="card-body p-4">
-          <form th:action="@{/admin/addfood}" th:object="${foodDTO}" method="post" enctype="multipart/form-data" id="addFoodForm">
-            <!-- Title Field -->
-            <div class="mb-4 form-field animate-slide-in-left" style="animation-delay: 0.1s;">
-              <label for="title" class="form-label fw-bold">Title <span class="text-danger">*</span></label>
-              <input type="text" class="form-control form-control-lg" id="title" th:field="*{title}" placeholder="e.g., Fresh Apples" required>
-              <div th:if="${#fields.hasErrors('title')}" class="text-danger mt-1" th:errors="*{title}"></div>
-            </div>
 
-            <!-- Description Field -->
-            <div class="mb-4 form-field animate-slide-in-left" style="animation-delay: 0.2s;">
-              <label for="description" class="form-label fw-bold">Description <span class="text-danger">*</span></label>
-              <textarea class="form-control" id="description" rows="4" th:field="*{description}" placeholder="e.g., Surplus from today's harvest, perfect condition" required></textarea>
-              <div th:if="${#fields.hasErrors('description')}" class="text-danger mt-1" th:errors="*{description}"></div>
-            </div>
-
-            <!-- Location Field -->
-            <div class="mb-4 form-field animate-slide-in-left" style="animation-delay: 0.3s;">
-              <label for="location" class="form-label fw-bold">Location <span class="text-danger">*</span></label>
-              <input type="text" class="form-control form-control-lg" id="location" th:field="*{location}" placeholder="e.g., Downtown Market, NYC" required>
-              <div th:if="${#fields.hasErrors('location')}" class="text-danger mt-1" th:errors="*{location}"></div>
-            </div>
-
-            <!-- Quantity Field -->
-            <div class="mb-4 form-field animate-slide-in-left" style="animation-delay: 0.4s;">
-              <label for="quantity" class="form-label fw-bold">Quantity <span class="text-danger">*</span></label>
-              <input type="text" class="form-control form-control-lg" id="quantity" th:field="*{quantity}" placeholder="e.g., 5 kg or 10 loaves" required>
-              <div th:if="${#fields.hasErrors('quantity')}" class="text-danger mt-1" th:errors="*{quantity}"></div>
-            </div>
-
-            <!-- Expiry Date Field -->
-            <div class="mb-4 form-field animate-slide-in-left" style="animation-delay: 0.5s;">
-              <label for="expiryDate" class="form-label fw-bold">Expiry Date <span class="text-danger">*</span></label>
-              <input type="date" class="form-control form-control-lg" id="expiryDate" th:field="*{expiryDate}" required>
-              <div th:if="${#fields.hasErrors('expiryDate')}" class="text-danger mt-1" th:errors="*{expiryDate}"></div>
-            </div>
-
-            <!-- Image Upload Field -->
-            <div class="mb-4 form-field animate-slide-in-left" style="animation-delay: 0.6s;">
-              <label for="image" class="form-label fw-bold">Image (Optional)</label>
-              <div class="input-group">
-                <input type="file" class="form-control form-control-lg" id="image" th:field="*{image}" accept="image/*">
-                <span class="input-group-text"><i class="bi bi-image"></i></span>
-              </div>
-              <small class="form-text text-muted">Upload a photo of the food item (JPG, PNG up to 5MB).</small>
-              <div th:if="${#fields.hasErrors('image')}" class="text-danger mt-1" th:errors="*{image}"></div>
-            </div>
-
-            <!-- Buttons -->
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end form-field animate-slide-in-left" style="animation-delay: 0.7s;">
-              <button type="submit" class="btn btn-success btn-lg me-md-2 hover-scale">
-                <i class="bi bi-check-lg me-2"></i>Add Food
-              </button>
-              <a th:href="@{/admin/homepage}" class="btn btn-secondary btn-lg hover-scale">Cancel</a>
-            </div>
-          </form>
+        <div>
+                    <textarea th:field="*{description}" placeholder="2. Detailed Description (Surplus from tonight's buffet, pickup by 8 PM)" rows="3" required
+                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-food-green focus:border-food-green"></textarea>
+          <div th:if="${#fields.hasErrors('description')}" class="text-red-500 text-sm mt-1" th:errors="*{description}">Description Error</div>
         </div>
-      </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <input type="text" th:field="*{location}" placeholder="3. Pickup Location/Address" required
+                   class="w-full px-4 py-3 border rounded-lg focus:ring-food-green">
+            <div th:if="${#fields.hasErrors('location')}" class="text-red-500 text-sm mt-1" th:errors="*{location}">Location Error</div>
+          </div>
+          <div>
+            <select th:field="*{category}" required class="w-full px-4 py-3 border rounded-lg focus:ring-food-green">
+              <option value="">-- 4. Select Category --</option>
+              <option value="FRUITS">Fruits & Vegetables</option>
+              <option value="BAKERY">Bakery</option>
+              <option value="MEAT">Meat / Protein</option>
+              <option value="DAIRY">Dairy</option>
+              <option value="OTHER">Other</option>
+            </select>
+            <div th:if="${#fields.hasErrors('category')}" class="text-red-500 text-sm mt-1" th:errors="*{category}">Category Error</div>
+          </div>
+          <div>
+            <label for="expiryDate" class="block text-xs text-gray-500">5. Expiry Date (Today or later)</label>
+            <input type="date" th:field="*{expiryDate}" required id="expiryDate"
+                   class="w-full px-4 py-3 border rounded-lg focus:ring-food-green">
+            <div th:if="${#fields.hasErrors('expiryDate')}" class="text-red-500 text-sm mt-1" th:errors="*{expiryDate}">Expiry Date Error</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <input type="number" th:field="*{quantity}" placeholder="6. Quantity" required
+                   class="w-full px-4 py-3 border rounded-lg focus:ring-food-green">
+            <div th:if="${#fields.hasErrors('quantity')}" class="text-red-500 text-sm mt-1" th:errors="*{quantity}">Quantity Error</div>
+          </div>
+          <div>
+            <input type="text" th:field="*{unit}" placeholder="7. Unit (kg, dozen, pieces)" required
+                   class="w-full px-4 py-3 border rounded-lg focus:ring-food-green">
+            <div th:if="${#fields.hasErrors('unit')}" class="text-red-500 text-sm mt-1" th:errors="*{unit}">Unit Error</div>
+          </div>
+        </div>
+
+        <div>
+          <label for="image" class="block text-sm font-medium text-gray-700 mb-2">8. Upload Image (Optional)</label>
+          <input type="file" name="image" id="image" accept="image/*"
+                 class="w-full border border-gray-300 rounded-lg p-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-food-light file:text-food-dark hover:file:bg-food-green/20">
+        </div>
+
+        <button type="submit" class="w-full bg-food-green hover:bg-food-dark text-white font-semibold py-3 rounded-lg transition duration-300 ease-in-out transform hover:scale-[1.005] shadow-lg">
+          <i class="bi bi-check-lg mr-2"></i> Submit Donation for Review
+        </button>
+
+      </form>
     </div>
   </div>
-</div>
+</main>
 
-<div th:replace="~{fragments/footer.html}"></div>
+<footer class="bg-food-dark text-white text-center py-6 mt-12">
+  <p class="text-sm">© 2025 Food Rescue | Feeding the Hungry, Reducing Waste 💚</p>
+</footer>
 
-<!-- Optional JS for form validation/enhancements (link to your validation.js) -->
-<script th:src="@{/js/validation.js}"></script>
 </body>
 </html>

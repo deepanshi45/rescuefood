@@ -1,316 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cart</title>
-    <style>
-        /* Reset and base styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-            overflow-x: hidden;
-        }
-
-        /* Header with hamburger menu button */
-        header {
-            background-color: #fff;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .hamburger {
-            cursor: pointer;
-            font-size: 24px;
-            transition: transform 0.3s ease;
-        }
-        .hamburger:hover {
-            transform: scale(1.1);
-        }
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        /* Main content */
-        main {
-            padding: 20px;
-            text-align: center;
-            min-height: calc(100vh - 120px); /* Adjust for header and nav */
-        }
-        h1 {
-            margin-bottom: 20px;
-            animation: fadeIn 1s ease-in;
-        }
-        p {
-            margin-bottom: 20px;
-            animation: slideUp 1s ease-out 0.5s both;
-        }
-        .cart-items {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .cart-item {
-            background-color: #fff;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            animation: slideUp 1s ease-out 1s both;
-        }
-        .cart-item img {
-            width: 50px;
-            height: 50px;
-            border-radius: 5px;
-        }
-        .item-details {
-            flex: 1;
-            margin-left: 15px;
-        }
-        .item-details h3 {
-            margin-bottom: 5px;
-        }
-        .quantity {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .checkout {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        /* Hamburger menu overlay */
-        .menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 999;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        .menu-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        .menu {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 300px;
-            height: 100%;
-            background-color: #fff;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-            transition: left 0.3s ease;
-            z-index: 1000;
-            padding: 20px;
-        }
-        .menu.active {
-            left: 0;
-        }
-        .menu h2 {
-            margin-bottom: 20px;
-        }
-        .menu ul {
-            list-style: none;
-        }
-        .menu li {
-            margin-bottom: 15px;
-        }
-        .menu a {
-            text-decoration: none;
-            color: #333;
-            font-size: 18px;
-            transition: color 0.3s ease;
-        }
-        .menu a:hover {
-            color: #007bff;
-        }
-        .search-bar {
-            margin-bottom: 20px;
-        }
-        .search-bar input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        /* Bottom navigation */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #fff;
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            z-index: 100;
-        }
-        .nav-item {
-            text-align: center;
-            flex: 1;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .nav-item:hover {
-            background-color: #f0f0f0;
-        }
-        .nav-item i {
-            font-size: 24px;
-            display: block;
-            margin-bottom: 5px;
-        }
-        .nav-item span {
-            font-size: 12px;
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            .menu {
-                width: 250px;
-            }
-            .cart-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-        }
-    </style>
+    <title>My Current Claims</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style> .font-poppins { font-family: 'Poppins', sans-serif; } </style>
 </head>
-<body>
-<header>
-    <div class="hamburger" id="hamburger">☰</div>
-    <div class="logo">User App</div>
+<body class="bg-gray-100 min-h-screen font-poppins">
+
+<header class="bg-white shadow-md p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-blue-600">My Current Claims</h1>
+    <a th:href="@{/user/homepage}" class="text-gray-500 hover:text-blue-600"><i class="bi bi-arrow-left"></i> Back to Home</a>
 </header>
 
-<main>
-    <h1>Your Cart</h1>
-    <p>Review and manage the items in your cart.</p>
-    <div class="cart-items">
-        <div class="cart-item">
-            <img src="https://via.placeholder.com/50" alt="Item 1">
-            <div class="item-details">
-                <h3>Item 1</h3>
-                <p>$10.00</p>
+<main class="container mx-auto p-4 md:p-8">
+    <div class="max-w-3xl mx-auto space-y-6">
+
+        <div th:if="${#lists.isEmpty(currentClaims)}" class="p-8 bg-yellow-100 text-yellow-700 rounded-lg text-center shadow-md">
+            You have no pending claims. <a th:href="@{/user/explore}" class="text-yellow-600 font-semibold hover:underline">Explore food now!</a>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(currentClaims)}" th:each="claim : ${currentClaims}" class="bg-white p-5 rounded-xl shadow-lg flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <i class="bi bi-basket text-4xl text-blue-500"></i>
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800" th:text="${claim.foodItem.title}">5 kg Fresh Tomatoes</h3>
+                    <p class="text-sm text-gray-500">Qty: <span th:text="${claim.claimedQuantity}">5</span> <span th:text="${claim.foodItem.unit}">kg</span></p>
+                    <p class="text-sm text-red-500">Pickup before: <span th:text="${#dates.format(claim.foodItem.expiryDate, 'dd MMM - hh:mm a')}">10 Mar - 7:00 PM</span></p>
+                </div>
             </div>
-            <div class="quantity">
-                <button>-</button>
-                <span>1</span>
-                <button>+</button>
+
+            <div class="text-right">
+                <a th:href="@{/user/claim/view/{id}(id=${claim.id})}" class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-600 transition">
+                    View Details
+                </a>
+                <form th:action="@{/user/claim/cancel/{id}(id=${claim.id})}" method="post" class="inline-block ml-2">
+                    <button type="submit" class="text-red-500 hover:text-red-700 text-sm font-medium">Cancel</button>
+                </form>
             </div>
         </div>
-        <div class="cart-item">
-            <img src="https://via.placeholder.com/50" alt="Item 2">
-            <div class="item-details">
-                <h3>Item 2</h3>
-                <p>$15.00</p>
-            </div>
-            <div class="quantity">
-                <button>-</button>
-                <span>2</span>
-                <button>+</button>
-            </div>
+
+        <div th:unless="${#lists.isEmpty(currentClaims)}" class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-green-500 text-center">
+            <p class="text-xl font-semibold text-gray-800 mb-4">Ready for Pickup?</p>
+            <a th:href="@{/user/checkout}" class="bg-green-500 text-white px-8 py-3 rounded-lg text-lg font-bold hover:bg-green-600 transition shadow-lg-green">
+                Confirm Pickup Details
+            </a>
         </div>
-    </div>
-    <div class="checkout">
-        <button>Proceed to Checkout</button>
     </div>
 </main>
-
-<div class="menu-overlay" id="menuOverlay">
-    <div class="menu" id="menu">
-        <h2>Menu</h2>
-        <div class="search-bar">
-            <input type="text" placeholder="Search...">
-        </div>
-        <ul>
-            <li><a href="#">Files</a></li>
-            <li><a href="#">About Us</a></li>
-            <li><a href="#">Order</a></li>
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Settings</a></li>
-        </ul>
-    </div>
-</div>
-
-<nav class="bottom-nav">
-    <div class="nav-item">
-        <i>🏠</i>
-        <span>Home</span>
-    </div>
-    <div class="nav-item">
-        <i>🛒</i>
-        <span>Cart</span>
-    </div>
-    <div class="nav-item">
-        <i>🔍</i>
-        <span>Explore</span>
-    </div>
-    <div class="nav-item">
-        <i>📦</i>
-        <span>Order</span>
-    </div>
-</nav>
-
-<script>
-    // Hamburger menu toggle
-    const hamburger = document.getElementById('hamburger');
-    const menuOverlay = document.getElementById('menuOverlay');
-    const menu = document.getElementById('menu');
-
-    hamburger.addEventListener('click', () => {
-        menuOverlay.classList.toggle('active');
-        menu.classList.toggle('active');
-    });
-
-    menuOverlay.addEventListener('click', (e) => {
-        if (e.target === menuOverlay) {
-            menuOverlay.classList.remove('active');
-            menu.classList.remove('active');
-        }
-    });
-</script>
 </body>
 </html>

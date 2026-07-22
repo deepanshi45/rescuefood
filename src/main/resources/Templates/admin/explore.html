@@ -1,83 +1,104 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Explore - Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <title>Admin - Food Listings Review</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Similar CSS as above */
-        :root { --primary-color: #28a745; --shadow-light: 0 4px 15px rgba(40, 167, 69, 0.1); --card-bg: rgba(255, 255, 255, 0.95); }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideInDownSmooth { from { opacity: 0; transform: translateY(-60px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        .animate-fade-in { animation: fadeInUp 1s ease-out forwards; }
-        .animate-slide-in-down { animation: slideInDownSmooth 0.8s ease-out forwards; }
-        body { background: linear-gradient(to bottom, #f8f9fa, #e9ecef); font-family: 'Segoe UI', sans-serif; }
-        .container { background: var(--card-bg); border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-top: 20px; animation: fadeInUp 1s ease-out; }
-        .hamburger { cursor: pointer; font-size: 24px; transition: transform 0.3s ease; }
-        .hamburger:hover { transform: scale(1.1); }
-        .menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 999; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
-        .menu-overlay.active { opacity: 1; visibility: visible; }
-        .menu { position: fixed; top: 0; left: -300px; width: 300px; height: 100%; background-color: #fff; box-shadow: 2px 0 5px rgba(0,0,0,0.1); transition: left 0.3s ease; z-index: 1000; padding: 20px; }
-        .menu.active { left: 0; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background-color: #fff; box-shadow: 0 -2px 5px rgba(0,0,0,0.1); display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; }
-        .nav-item { text-align: center; flex: 1; cursor: pointer; transition: background-color 0.3s ease; }
-        .nav-item:hover { background-color: #f0f0f0; }
-        .nav-item i { font-size: 24px; display: block; margin-bottom: 5px; }
-        .nav-item span { font-size: 12px; }
-        @media (max-width: 600px) { .menu { width: 250px; } }
+        /* Custom Tailwind colors for a food/green theme */
+        .bg-food-green { background-color: #16A34A; }
+        .text-food-dark { color: #14532D; }
+        .bg-food-light { background-color: #DCFCE7; }
+        /* A common web font for better look */
+        .font-poppins { font-family: 'Poppins', sans-serif; }
     </style>
 </head>
-<body>
-<header style="background-color: #fff; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-    <div class="hamburger" id="hamburger">☰</div>
-    <div style="font-size: 24px; font-weight: bold;">Admin Panel</div>
+<body class="bg-gray-100 text-gray-800 font-poppins">
+
+<header class="bg-white shadow-md p-4 flex justify-between items-center sticky top-0 z-10">
+    <h1 class="text-2xl font-bold text-food-dark">Food Listings Review</h1>
+    <a th:href="@{/admin/dashboard}" class="text-gray-500 hover:text-food-dark transition">← Back to Dashboard</a>
 </header>
 
-<div class="container mt-4 animate-fade-in">
-    <h2 class="animate-slide-in-down">Explore - Admin View</h2>
-    <p class="animate-slide-in-down">Admin tools to explore food data and analytics.</p>
-    <div class="card animate-slide-in-down">
-        <div class="card-body">
-            <h5>Food Items Overview</h5>
-            <p>View and manage available food rescues.</p>
+<main class="container mx-auto mt-8 p-6 bg-white rounded-lg shadow-xl">
+    <h2 class="text-3xl font-bold text-food-dark mb-6 border-b pb-2">Active Food Items</h2>
+
+    <form th:action="@{/admin/explore/search}" method="get" class="mb-6 p-4 border rounded-lg bg-gray-50">
+        <div class="flex space-x-4">
+            <input type="text" name="query" placeholder="Search by item, donor, or location..."
+                   class="flex-grow px-4 py-2 border rounded-lg focus:ring-food-green focus:border-food-green">
+            <button type="submit" class="bg-food-green text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">Search</button>
+        </div>
+    </form>
+
+    <div class="overflow-x-auto">
+        <table th:if="${foods != null and !foods.isEmpty()}" class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-food-light">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-food-dark uppercase tracking-wider">Item</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-food-dark uppercase tracking-wider">Quantity</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-food-dark uppercase tracking-wider">Donar/Admin ID</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-food-dark uppercase tracking-wider">user name</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-red-700 uppercase tracking-wider">Expiry Date</th>
+                <th class="px-6 py-3 text-center">Actions</th>
+            </tr>
+            </thead>
+
+            <tbody class="bg-white divide-y divide-gray-200">
+            <tr th:each="food : ${foods}">
+                <td th:text="${food.title}" class="px-6 py-4 whitespace-nowrap text-sm font-medium">Example Item</td>
+
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <span th:text="${food.quantity}">20</span> <span th:text="${food.unit}">Dozen</span>
+                </td>
+
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <span th:text="${food.postedBy.name} ?: 'ID: ' + ${food.postedBy.id}">Hotel Name</span>
+                </td>
+
+                <td th:text="${food.expiryDate}" class="px-6 py-4 whitespace-nowrap text-sm text-red-500">2025-12-31</td>
+
+                <!-- Actions column with dynamic status -->
+                <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                    <div th:switch="${food.status}">
+                        <!-- Claimed status: Accept/Decline buttons -->
+                        <span th:case="'CLAIMED'">
+                            <form th:action="@{/admin/food/status/{id}(id=${food.id})}" method="post" class="inline-block mr-2">
+                                <input type="hidden" name="action" value="ACCEPT"/>
+                                <button type="submit" class="bg-food-green text-white px-2 py-1 rounded-md text-xs hover:bg-green-700">Accept</button>
+                            </form>
+
+                            <form th:action="@{/admin/food/status/{id}(id=${food.id})}" method="post" class="inline-block">
+                                <input type="hidden" name="action" value="DECLINE"/>
+                                <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded-md text-xs hover:bg-red-700">Decline</button>
+                            </form>
+                        </span>
+
+                        <!-- Available status: Edit/Close Listing links -->
+                        <span th:case="'AVAILABLE'">
+                            <a th:href="@{/admin/food/edit/{id}(id=${food.id})}" class="text-blue-600 hover:text-blue-900 mr-3">Edit</a>
+                            <a th:href="@{/admin/food/close/{id}(id=${food.id})}" class="text-red-500 hover:text-red-700">Close Listing</a>
+                        </span>
+
+                        <!-- Any other status: just display status -->
+                        <span th:case="*">
+                            <span class="text-gray-400" th:text="${food.status}"></span>
+                        </span>
+                    </div>
+                </td>
+            </tr>
+
+            <tr th:if="${#lists.isEmpty(foods)}">
+                <td colspan="5" class="px-6 py-4 text-center text-gray-500">No active food listings found.</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div th:if="${foods == null or foods.isEmpty()}" class="p-4 bg-yellow-100 text-yellow-700 rounded-lg text-center">
+            No active food listings found.
         </div>
     </div>
-</div>
-
-<div class="menu-overlay" id="menuOverlay">
-    <div class="menu" id="menu">
-        <h2>Menu</h2>
-        <ul style="list-style: none; padding: 0;">
-            <li style="margin-bottom: 15px;"><a href="#" style="text-decoration: none; color: #333;">About Us</a></li>
-            <li style="margin-bottom: 15px;"><a href="#" style="text-decoration: none; color: #333;">Explore</a></li>
-            <li style="margin-bottom: 15px;"><a href="#" style="text-decoration: none; color: #333;">History</a></li>
-            <li style="margin-bottom: 15px;"><a href="#" style="text-decoration: none; color: #333;">Order</a></li>
-        </ul>
-    </div>
-</div>
-
-<nav class="bottom-nav">
-    <div class="nav-item"><i>🏠</i><span>Home</span></div>
-    <div class="nav-item"><i>🍔</i><span>Add Food</span></div>
-    <div class="nav-item"><i>🔔</i><span>Notification</span></div>
-</nav>
-
-<script>
-    const hamburger = document.getElementById('hamburger');
-    const menuOverlay = document.getElementById('menuOverlay');
-    const menu = document.getElementById('menu');
-    hamburger.addEventListener('click', () => {
-        menuOverlay.classList.toggle('active');
-        menu.classList.toggle('active');
-    });
-    menuOverlay.addEventListener('click', (e) => {
-        if (e.target === menuOverlay) {
-            menuOverlay.classList.remove('active');
-            menu.classList.remove('active');
-        }
-    });
-</script>
+</main>
 </body>
-</html>
+</html> 

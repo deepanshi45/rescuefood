@@ -1,13 +1,16 @@
 package com.example.login.service;
 
 import com.example.login.dto.FoodDTO;
+import com.example.login.model.Admin;
 import com.example.login.model.FoodCategory;
 import com.example.login.model.FoodStatus;
 import com.example.login.model.Fooditem;
+import com.example.login.repository.AdminRepository;
 import com.example.login.repository.FoodRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -18,39 +21,62 @@ public class FoodService {
     @Autowired
     private FoodRepository foodRepository;
 
-    // Post a new food item (Refined to accept DTO)
+    @Autowired
+    private AdminRepository adminRepository;
+
+    // --- 🥗 Post a new food item ---
     public Fooditem postFood(FoodDTO foodDTO) {
-        if (foodDTO.getExpiryDate().isBefore(LocalDate.now())) {
-            throw new RuntimeException("Food item expiry date must be in the future");
+
+        if (foodDTO.getPostedBy() == null) {
+            throw new SecurityException("Poster ID (postedBy) cannot be null.");
+        }
+        if (foodDTO.getExpiryDate() == null || foodDTO.getExpiryDate().isBefore(LocalDate.now())) {
+            throw new RuntimeException("Food expiry date must be today or in the future.");
         }
 
-        Fooditem foodItem = new Fooditem();
-        foodItem.setTitle(foodDTO.getTitle());
-        foodItem.setDescription(foodDTO.getDescription());
-        foodItem.setLocation(foodDTO.getLocation());
+        // Fetch Admin entity
+        Long adminId = foodDTO.getPostedBy();
+        Admin poster = adminRepository.findById(adminId)
+                .orElseThrow(() -> new RuntimeException("Poster (Admin) not found with ID: " + adminId));
 
-        // Convert BigDecimal to Integer for quantity
-        if (foodDTO.getQuantity() != null) {
-            foodItem.setQuantity(foodDTO.getQuantity().intValue());
+        // Validate category
+        if (foodDTO.getCategory() == null || foodDTO.getCategory().isBlank()) {
+            throw new RuntimeException("Food category is required.");
         }
-
-        // Convert String category to Enum
+        FoodCategory category;
         try {
-            foodItem.setCategory(FoodCategory.valueOf(foodDTO.getCategory().toUpperCase()));
+            category = FoodCategory.valueOf(foodDTO.getCategory().toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid food category: " + foodDTO.getCategory());
         }
 
-        foodItem.setExpiryDate(foodDTO.getExpiryDate());
-        foodItem.setStatus(FoodStatus.AVAILABLE); // Default status
+        // Create and populate Fooditem
+        Fooditem foodItem = new Fooditem();
+        foodItem.setTitle(foodDTO.getTitle());
+        foodItem.setDescription(foodDTO.getDescription());
+        foodItem.setLocation(foodDTO.getLocation());
+        foodItem.setCategory(category);
 
-        // FIXME: Set the user/admin who posted this
-        // foodItem.setPostedBy(adminRepository.findById(1L).get());
+        // Safe quantity conversion
+        if (foodDTO.getQuantity() != null) {
+            if (foodDTO.getQuantity().compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0 ||
+                    foodDTO.getQuantity().compareTo(BigDecimal.valueOf(Integer.MIN_VALUE)) < 0) {
+                throw new RuntimeException("Quantity value is too large or too small.");
+            }
+            foodItem.setQuantity(foodDTO.getQuantity().intValue());
+        } else {
+            foodItem.setQuantity(null);
+        }
+
+        foodItem.setUnit(foodDTO.getUnit());
+        foodItem.setExpiryDate(foodDTO.getExpiryDate());
+        foodItem.setPostedBy(poster);
+        foodItem.setStatus(FoodStatus.AVAILABLE);
 
         return foodRepository.save(foodItem);
     }
 
-    // View all food items (explore/search)
+    // --- 🔹 Get all food items (Admin view) ---
     public List<Fooditem> getAllFoodItems(String location, String keyword) {
         if (location != null && !location.isEmpty()) {
             return foodRepository.findByLocationContainingIgnoreCase(location);
@@ -61,19 +87,23 @@ public class FoodService {
         return foodRepository.findAll();
     }
 
-    // Search food by criteria
-    public List<Fooditem> searchFood(String query) {
-        return foodRepository.findByDescriptionContainingIgnoreCaseOrLocationContainingIgnoreCase(query, query);
+    public List<Fooditem> getAllActiveFoodItems() {
+        return foodRepository.findAll();
     }
 
-    // Claim or update food status
+    // --- 🔹 User claims ---
+    public List<Fooditem> getClaimsByUserId(Long userId) {
+        return foodRepository.findByClaimedBy(userId);
+    }
+
+    // --- 🔹 Claim food ---
     public Fooditem claimFood(Long foodId, Long userId) {
         Optional<Fooditem> food = foodRepository.findById(foodId);
         if (food.isPresent()) {
             Fooditem item = food.get();
             if (item.getStatus() == FoodStatus.AVAILABLE) {
                 item.setStatus(FoodStatus.CLAIMED);
-                item.setClaimedBy(userId); // Assuming claimedBy field exists
+                item.setClaimedBy(userId);
                 return foodRepository.save(item);
             } else {
                 throw new RuntimeException("Food item is no longer available");
@@ -82,8 +112,40 @@ public class FoodService {
         throw new RuntimeException("Food item not found with ID: " + foodId);
     }
 
-    // Get food by ID
+    // --- 🔹 Update food status (Accept/Decline) ---
+    public void updateStatus(Long foodId, FoodStatus newStatus) {
+        Fooditem foodItem = foodRepository.findById(foodId)
+                .orElseThrow(() -> new RuntimeException("Food item not found for status update."));
+
+        foodItem.setStatus(newStatus);
+
+        // If relisting, clear claimedBy field
+        if (newStatus == FoodStatus.AVAILABLE) {
+            foodItem.setClaimedBy(null);
+        }
+
+        foodRepository.save(foodItem);
+    }
+
+    // --- 🔹 Get food by ID ---
     public Optional<Fooditem> getFoodById(Long id) {
         return foodRepository.findById(id);
+    }
+
+    // ✅ CORRECTED: Calling the new repository method
+    // --- 🔹 Get available food for users ---
+    public List<Fooditem> getAvailable() {
+        return foodRepository.findByStatusAndExpiryDateGreaterThanEqual(FoodStatus.AVAILABLE, LocalDate.now());
+    }
+
+    // --- 🔹 Count by status ---
+    public Long countByStatus(FoodStatus status) {
+        return foodRepository.countByStatus(status);
+    }
+
+    // --- 🔹 Search ---
+    public List<Fooditem> searchFood(String query) {
+        if (query == null || query.isBlank()) return getAvailable();
+        return foodRepository.findByDescriptionContainingIgnoreCaseOrLocationContainingIgnoreCase(query, query);
     }
 }

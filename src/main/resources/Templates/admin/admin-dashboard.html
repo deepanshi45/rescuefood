@@ -1,224 +1,90 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="/css/styles.css">
-    <style>
-        /* General Styles */
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            margin: 0;
-            padding: 0;
-            color: #333;
-            min-height: 100vh;
-        }
-
-        header {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            animation: slideDown 0.8s ease-out;
-        }
-
-        h1 {
-            margin: 0;
-            color: #4a5568;
-            font-size: 2rem;
-        }
-
-        nav {
-            display: flex;
-            gap: 1rem;
-        }
-
-        nav a {
-            text-decoration: none;
-            color: #667eea;
-            font-weight: bold;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-        nav a:hover {
-            background-color: #667eea;
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        main {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            animation: fadeInUp 1s ease-out 0.5s both;
-        }
-
-        h2 {
-            color: #4a5568;
-            text-align: center;
-            margin-bottom: 1rem;
-            animation: pulse 2s infinite;
-        }
-
-        p {
-            text-align: center;
-            color: #666;
-            margin-bottom: 2rem;
-            font-size: 1.1rem;
-        }
-
-        /* Table Styles */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-            border-radius: 8px;
-            animation: slideInLeft 0.8s ease-out;
-        }
-
-        th, td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        tr {
-            transition: all 0.3s ease;
-        }
-
-        tr:hover {
-            background-color: #f7fafc;
-            transform: scale(1.02);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        tr:nth-child(even) {
-            background-color: #f8f9ff;
-        }
-
-        /* Animations */
-        @keyframes slideDown {
-            from {
-                transform: translateY(-100%);
-                opacity: 0;
+    <!DOCTYPE html>
+    <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin Dashboard | Food Rescue</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            'food-green': '#16A34A', 'food-orange': '#EA580C',
+                            'food-dark': '#14532D', 'food-light': '#DCFCE7',
+                        }
+                    }
+                }
             }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
+        </script>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+        <style> body { font-family: 'Poppins', sans-serif; } </style>
+    </head>
+    <body class="bg-gradient-to-br from-food-light via-green-50 to-food-green min-h-screen text-gray-800">
 
-        @keyframes fadeInUp {
-            from {
-                transform: translateY(30px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
+    <header class="bg-white shadow-lg py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-10">
+        <h1 class="text-xl md:text-2xl font-semibold text-food-dark flex items-center gap-2">
+            <i class="bi bi-house-door-fill text-food-green"></i> Admin Panel
+        </h1>
+        <nav class="hidden md:flex gap-4 md:gap-6">
+            <a th:href="@{/admin/dashboard}" class="text-food-green hover:text-food-dark font-bold">Dashboard</a>
+            <a th:href="@{/admin/explore}" class="text-gray-600 hover:text-food-dark">Listings</a>
+            <a th:href="@{/admin/history}" class="text-gray-600 hover:text-food-dark">History</a>
+            <a th:href="@{/admin/settings}" class="text-gray-600 hover:text-food-dark">Settings</a>
+            <a th:href="@{/logout}" class="text-red-500 hover:text-red-700">Logout</a>
+        </nav>
+    </header>
 
-        @keyframes slideInLeft {
-            from {
-                transform: translateX(-100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
+    <main class="py-12 px-6 md:px-12">
+        <div class="container mx-auto text-center">
+            <div class="bg-green-700/80 p-8 md:p-12 rounded-xl text-white mb-10 shadow-xl">
+                <h1 class="text-4xl md:text-5xl font-extrabold mb-2">Welcome, <span sec:authentication="name">Admin</span>!</h1>
+                <p class="text-lg md:text-xl font-medium">Manage all platform resources efficiently.</p>
+            </div>
 
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
-        }
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                gap: 1rem;
-            }
+                <a th:href="@{/admin/explore}" class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-food-green transition duration-300 hover:shadow-xl hover:scale-[1.02] block">
+                    <h3 class="text-xl font-semibold text-food-dark mb-2 flex items-center justify-center">
+                        <i class="bi bi-list-check mr-2 text-food-green"></i> Food Listings
+                    </h3>
+                    <p class="text-gray-600 text-sm">Review and manage all active food donations.</p>
+                </a>
 
-            main {
-                margin: 1rem;
-                padding: 1rem;
-            }
+                <a th:href="@{/admin/addfood}" class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-food-orange transition duration-300 hover:shadow-xl hover:scale-[1.02] block">
+                    <h3 class="text-xl font-semibold text-food-dark mb-2 flex items-center justify-center">
+                        <i class="bi bi-plus-circle-fill mr-2 text-food-orange"></i> Post New Donation
+                    </h3>
+                    <p class="text-gray-600 text-sm">Post a new food surplus (as a Donor/Admin).</p>
+                </a>
 
-            table {
-                font-size: 0.9rem;
-            }
+                <a th:href="@{/admin/history}" class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-blue-500 transition duration-300 hover:shadow-xl hover:scale-[1.02] block">
+                    <h3 class="text-xl font-semibold text-food-dark mb-2 flex items-center justify-center">
+                        <i class="bi bi-clock-history mr-2 text-blue-500"></i> Rescue History
+                    </h3>
+                    <p class="text-gray-600 text-sm">View completed orders and audit logs.</p>
+                </a>
 
-            th, td {
-                padding: 0.5rem;
-            }
-        }
-    </style>
-</head>
-<body>
-<header>
-    <h1>Welcome, Hotel/Admin!</h1>
-    <nav>
-        <a href="/">Home</a>
-        <a href="/login-hotel">Logout</a>
-    </nav>
-</header>
+                <a th:href="@{/admin/notifications}" class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-indigo-500 transition duration-300 hover:shadow-xl hover:scale-[1.02] block">
+                    <h3 class="text-xl font-semibold text-food-dark mb-2 flex items-center justify-center">
+                        <i class="bi bi-bell-fill mr-2 text-indigo-500"></i> Notifications
+                    </h3>
+                    <p class="text-gray-600 text-sm">System alerts and pending user feedback review.</p>
+                </a>
 
-<main>
-    <h2>Hotel Dashboard</h2>
-    <p>Here you can manage food donations, view requests, and update hotel info.</p>
+                <a th:href="@{/admin/settings}" class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-gray-500 transition duration-300 hover:shadow-xl hover:scale-[1.02] block">
+                    <h3 class="text-xl font-semibold text-food-dark mb-2 flex items-center justify-center">
+                        <i class="bi bi-gear-fill mr-2 text-gray-500"></i> Settings
+                    </h3>
+                    <p class="text-gray-600 text-sm">Manage profile and security settings.</p>
+                </a>
+            </div>
+        </div>
+    </main>
 
-    <!-- Example table for food donations -->
-    <table border="1" cellpadding="10">
-        <thead>
-        <tr>
-            <th>Donation ID</th>
-            <th>Food Item</th>
-            <th>Quantity</th>
-            <th>Status</th>
-        </tr>
-        </thead>
-        <tbody>
-        <!-- Example static data -->
-        <tr>
-            <td>1</td>
-            <td>Sandwiches</td>
-            <td>50</td>
-            <td>Pending</td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>Fruits</td>
-            <td>30</td>
-            <td>Accepted</td>
-        </tr>
-        </tbody>
-    </table>
-</main>
-</body>
-</html>
-
+    <footer class="bg-food-dark text-white text-center py-6 mt-12">
+        <p class="text-sm">© 2025 Food Rescue | Admin Panel 💚</p>
+    </footer>
+    </body>
+    </html>

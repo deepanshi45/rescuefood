@@ -1,26 +1,38 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Role | Food Rescue</title>
-    <style>
-        /* Reset default styles */
-        * {
-          box-sizing: border-box;
-          margin: 0;
-          padding: 0;
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom Tailwind config for improved theme colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'food-green': '#16A34A',  // Deeper, fresher green
+                        'food-orange': '#EA580C', // Vibrant orange
+                        'food-dark': '#14532D',   // Rich dark green
+                        'food-light': '#DCFCE7',  // Light green for accents
+                    }
+                }
+            }
         }
-        /* ... (rest of your CSS) ... */
-    </style>
+    </script>
 </head>
-<body>
-<div class="card">
-    <h1>Welcome to Food Rescue</h1>
-    <p>Select your role to continue</p>
-    <div class="role-buttons">
-        <a th:href="@{/user/login}" class="role-btn user-btn">User</a>
-
-        <a th:href="@{/admin/login}" class="role-btn admin-btn">Admin</a>
+<body class="bg-gradient-to-br from-food-light via-green-50 to-food-green min-h-screen flex items-center justify-center p-4">
+<div class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full text-center border border-gray-200">
+    <h1 class="text-4xl font-bold text-food-dark mb-4">Welcome to Food Rescue</h1>
+    <p class="text-gray-700 mb-8 text-lg">Select your role to continue and help reduce food waste</p>
+    <div class="space-y-4">
+        <a th:href="@{/user/login}" class="block bg-food-green hover:bg-food-dark text-white font-semibold py-4 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl">
+            User
+        </a>
+        <a th:href="@{/admin/login}" class="block bg-food-orange hover:bg-orange-700 text-white font-semibold py-4 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl">
+            Admin
+        </a>
     </div>
 </div>
 </body>

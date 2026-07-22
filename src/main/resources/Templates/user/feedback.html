@@ -1,204 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Food Rescue Feedback</title>
-    <style>
-        /* Reset */
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-          font-family: 'Poppins', sans-serif;
-        }
-
-        body {
-          background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,0,0.5)),
-            url('https://images.unsplash.com/photo-1504674900247-0877df9cc836') no-repeat center center/cover;
-          height: 100vh;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          overflow: hidden;
-          animation: fadeIn 1s ease-in;
-        }
-
-        @keyframes fadeIn {
-          from {opacity: 0;}
-          to {opacity: 1;}
-        }
-
-        .feedback-container {
-          background-color: rgba(255, 255, 255, 0.92);
-          width: 420px;
-          border-radius: 20px;
-          padding: 40px 35px;
-          text-align: center;
-          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-          position: relative;
-          animation: slideUp 1.2s ease;
-        }
-
-        @keyframes slideUp {
-          0% { transform: translateY(50px); opacity: 0; }
-          100% { transform: translateY(0); opacity: 1; }
-        }
-
-        .header-image {
-          width: 100px;
-          height: 100px;
-          border-radius: 50%;
-          object-fit: cover;
-          border: 3px solid #2ecc71;
-          margin-bottom: 10px;
-          animation: bounce 3s infinite ease-in-out;
-        }
-
-        @keyframes bounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
-        }
-
-        h2 {
-          color: #2ecc71;
-          font-size: 26px;
-          margin-bottom: 20px;
-          letter-spacing: 1px;
-        }
-
-        .form-group {
-          position: relative;
-          margin-bottom: 25px;
-          text-align: left;
-        }
-
-        input, textarea, select {
-          width: 100%;
-          padding: 12px;
-          border: 2px solid #ccc;
-          border-radius: 10px;
-          font-size: 15px;
-          outline: none;
-          transition: 0.3s ease;
-          background-color: #fff;
-        }
-
-        input:focus, textarea:focus, select:focus {
-          border-color: #2ecc71;
-          box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
-        }
-
-        label {
-          position: absolute;
-          top: 12px;
-          left: 15px;
-          color: #777;
-          font-size: 15px;
-          pointer-events: none;
-          transition: 0.3s ease;
-        }
-
-        input:focus + label,
-        input:not(:placeholder-shown) + label,
-        textarea:focus + label,
-        textarea:not(:placeholder-shown) + label {
-          top: -10px;
-          left: 10px;
-          background: white;
-          padding: 0 5px;
-          font-size: 13px;
-          color: #2ecc71;
-          font-weight: 600;
-        }
-
-        textarea {
-          resize: none;
-          height: 90px;
-        }
-
-        button {
-          background-color: #2ecc71;
-          color: white;
-          border: none;
-          padding: 14px 20px;
-          border-radius: 10px;
-          margin-top: 10px;
-          font-size: 16px;
-          font-weight: 600;
-          cursor: pointer;
-          width: 100%;
-          transition: all 0.3s ease;
-          box-shadow: 0 4px 12px rgba(46, 204, 113, 0.4);
-        }
-
-        button:hover {
-          transform: translateY(-3px);
-          background-color: #27ae60;
-          box-shadow: 0 8px 20px rgba(46, 204, 113, 0.6);
-        }
-
-        /* Floating food images animation */
-        .food-pic {
-          position: absolute;
-          width: 70px;
-          height: 70px;
-          border-radius: 50%;
-          opacity: 0.6;
-          animation: float 8s ease-in-out infinite;
-        }
-
-        @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-20px); }
-        }
-
-        .food1 { top: 10%; left: 5%; animation-delay: 0s; }
-        .food2 { bottom: 10%; right: 5%; animation-delay: 2s; }
-        .food3 { top: 15%; right: 10%; animation-delay: 4s; }
-    </style>
+    <title>Feedback & Support</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style> .font-poppins { font-family: 'Poppins', sans-serif; } </style>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen font-poppins">
 
-<!-- Floating food images -->
-<img src="https://images.unsplash.com/photo-1617196038641-edd52e44a24d" class="food-pic food1" alt="salad">
-<img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c" class="food-pic food2" alt="burger">
-<img src="https://images.unsplash.com/photo-1627308595229-7830a5c91f9f" class="food-pic food3" alt="pasta">
+<header class="bg-white shadow-md p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-purple-600">Feedback & Support</h1>
+    <a th:href="@{/user/homepage}" class="text-gray-500 hover:text-purple-600"><i class="bi bi-arrow-left"></i> Back to Home</a>
+</header>
 
-<!-- Feedback Form -->
-<div class="feedback-container">
-    <img src="https://images.unsplash.com/photo-1529042410759-befb1204b468" class="header-image" alt="Food Rescue Logo">
-    <h2>🥗 Food Rescue Feedback</h2>
+<main class="container mx-auto p-4 md:p-8">
+    <div class="max-w-xl mx-auto bg-white p-8 rounded-xl shadow-2xl border-t-4 border-purple-500">
 
-    <form action="/submitFeedback" method="post">
-        <div class="form-group">
-            <input type="text" id="name" name="name" placeholder=" " required>
-            <label for="name">Full Name</label>
+        <div class="text-center mb-6">
+            <i class="bi bi-chat-dots text-6xl text-purple-500"></i>
+            <h2 class="text-3xl font-bold text-gray-800 mt-3">Tell Us What You Think</h2>
+            <p class="text-gray-500">Your feedback helps us rescue more food effectively.</p>
         </div>
 
-        <div class="form-group">
-            <input type="email" id="email" name="email" placeholder=" " required>
-            <label for="email">Email Address</label>
-        </div>
+        <form th:action="@{/user/submitFeedback}" method="post" class="space-y-6">
 
-        <div class="form-group">
-            <select id="rating" name="rating" required>
-                <option value="">-- Select Rating --</option>
-                <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
-                <option value="4">⭐⭐⭐⭐ Good</option>
-                <option value="3">⭐⭐⭐ Average</option>
-                <option value="2">⭐⭐ Poor</option>
-                <option value="1">⭐ Very Poor</option>
-            </select>
-        </div>
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-700">Your Name</label>
+                <input type="text" id="name" name="name" th:value="${#authentication.principal.username}" required class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500">
+            </div>
 
-        <div class="form-group">
-            <textarea id="message" name="message" placeholder=" " required></textarea>
-            <label for="message">Your Feedback</label>
-        </div>
+            <div>
+                <label for="rating" class="block text-sm font-medium text-gray-700">Overall Rating</label>
+                <select id="rating" name="rating" required class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500">
+                    <option value="">-- Select Rating --</option>
+                    <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                    <option value="4">⭐⭐⭐⭐ Good</option>
+                    <option value="3">⭐⭐⭐ Average</option>
+                    <option value="2">⭐⭐ Poor</option>
+                    <option value="1">⭐ Very Poor</option>
+                </select>
+            </div>
 
-        <button type="submit">Submit Feedback 🍽</button>
-    </form>
-</div>
+            <div>
+                <label for="message" class="block text-sm font-medium text-gray-700">Message/Issue Description</label>
+                <textarea id="message" name="message" rows="4" required class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"></textarea>
+            </div>
+
+            <button type="submit" class="w-full bg-purple-500 text-white px-5 py-3 rounded-lg text-lg font-bold hover:bg-purple-600 transition shadow-lg-green">
+                Submit Feedback <i class="bi bi-send"></i>
+            </button>
+        </form>
+    </div>
+</main>
 </body>
 </html>

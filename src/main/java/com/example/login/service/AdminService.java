@@ -1,6 +1,5 @@
-package com.example.login.service;
-
-
+package com.example.login.service;//package com.example.login.service;
+//
 
 import com.example.login.model.Admin;
 import com.example.login.repository.AdminRepository;
