@@ -72,6 +72,7 @@ public class FoodService {
         foodItem.setExpiryDate(foodDTO.getExpiryDate());
         foodItem.setPostedBy(poster);
         foodItem.setStatus(FoodStatus.AVAILABLE);
+        foodItem.setImages(foodDTO.getImages()); // persist uploaded image path(s), if any
 
         return foodRepository.save(foodItem);
     }
@@ -136,6 +137,23 @@ public class FoodService {
     // --- 🔹 Get available food for users ---
     public List<Fooditem> getAvailable() {
         return foodRepository.findByStatusAndExpiryDateGreaterThanEqual(FoodStatus.AVAILABLE, LocalDate.now());
+    }
+
+    // --- 🔹 Explore page search (by food name and/or category) ---
+    public List<Fooditem> searchAvailableFood(String keyword, String categoryName) {
+        String normalizedKeyword = (keyword != null && !keyword.isBlank()) ? keyword.trim() : null;
+
+        FoodCategory category = null;
+        if (categoryName != null && !categoryName.isBlank()) {
+            try {
+                category = FoodCategory.valueOf(categoryName.trim().toUpperCase());
+            } catch (IllegalArgumentException e) {
+                // Unknown/invalid category value: ignore the filter rather than failing the search
+                category = null;
+            }
+        }
+
+        return foodRepository.searchAvailableFood(FoodStatus.AVAILABLE, LocalDate.now(), normalizedKeyword, category);
     }
 
     // --- 🔹 Count by status ---

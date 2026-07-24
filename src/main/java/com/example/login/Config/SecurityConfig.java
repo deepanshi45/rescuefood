@@ -40,6 +40,7 @@ public class SecurityConfig {
 
 
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/feedback/admin/**").hasRole("ADMIN")
 
 
                         .requestMatchers("/user/**").authenticated()

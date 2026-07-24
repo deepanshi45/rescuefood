@@ -3,6 +3,7 @@ package com.example.login.Controller;
 import com.example.login.dto.UserDTO;
 import org.springframework.http.ResponseEntity;
 import com.example.login.model.User;
+import com.example.login.service.ClaimService;
 import com.example.login.service.UserService;
 import com.example.login.service.FoodService;
 import org.springframework.stereotype.Controller;
@@ -18,10 +19,12 @@ public class UserController {
 
     private final FoodService foodService;
     private final UserService userService;
+    private final ClaimService claimService;
 
-    public UserController(FoodService foodService, UserService userService) {
+    public UserController(FoodService foodService, UserService userService, ClaimService claimService) {
         this.foodService = foodService;
         this.userService = userService;
+        this.claimService = claimService;
     }
 
     // --- Homepage ---
@@ -32,8 +35,12 @@ public class UserController {
 
     // --- Explore page ---
     @GetMapping("/explore")
-    public String explore(Model model) {
-        model.addAttribute("foods", foodService.getAvailable());
+    public String explore(@RequestParam(value = "keyword", required = false) String keyword,
+                          @RequestParam(value = "category", required = false) String category,
+                          Model model) {
+        model.addAttribute("foods", foodService.searchAvailableFood(keyword, category));
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("category", category);
         return "user/explore";
     }
 
@@ -99,14 +106,14 @@ public class UserController {
 
 
 
-    // --- Order page (user's claimed items) ---
+    // --- Order page (user's claim history) ---
     @GetMapping("/order")
     public String userOrder(Model model) {
         Long userId = getCurrentUserId();
         if (userId != null) {
-            model.addAttribute("orders", foodService.getClaimsByUserId(userId));
+            model.addAttribute("claims", claimService.getClaimsByUser(userId));
         } else {
-            model.addAttribute("orders", java.util.Collections.emptyList());
+            model.addAttribute("claims", java.util.Collections.emptyList());
         }
         return "user/order";
     }
@@ -133,7 +140,7 @@ public class UserController {
                 return "redirect:/user/login";
             }
 
-            foodService.claimFood(foodId, userId);
+            claimService.createClaim(foodId, userId);
 
             redirectAttributes.addFlashAttribute("success", "✅ Food claimed! Awaiting Admin approval.");
             return "redirect:/user/order";

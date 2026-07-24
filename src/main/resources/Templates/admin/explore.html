@@ -36,6 +36,7 @@
         <table th:if="${foods != null and !foods.isEmpty()}" class="min-w-full divide-y divide-gray-200">
             <thead class="bg-food-light">
             <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-food-dark uppercase tracking-wider">Image</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-food-dark uppercase tracking-wider">Item</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-food-dark uppercase tracking-wider">Quantity</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-food-dark uppercase tracking-wider">Donar/Admin ID</th>
@@ -47,6 +48,15 @@
 
             <tbody class="bg-white divide-y divide-gray-200">
             <tr th:each="food : ${foods}">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <img th:if="${food.images != null and !food.images.isEmpty()}"
+                         th:src="@{${food.images[0]}}" alt="Food Image"
+                         class="w-16 h-16 object-cover rounded-md">
+                    <div th:unless="${food.images != null and !food.images.isEmpty()}"
+                         class="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center text-gray-400 text-xs">
+                        No Image
+                    </div>
+                </td>
                 <td th:text="${food.title}" class="px-6 py-4 whitespace-nowrap text-sm font-medium">Example Item</td>
 
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -57,31 +67,41 @@
                     <span th:text="${food.postedBy.name} ?: 'ID: ' + ${food.postedBy.id}">Hotel Name</span>
                 </td>
 
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <span th:if="${pendingClaims.get(food.id)} != null">
+                        <span class="block font-medium text-gray-800" th:text="${pendingClaims.get(food.id).user.name}">Claimant Name</span>
+                        <span class="inline-block mt-1 px-2 py-0.5 text-xs font-semibold uppercase rounded-full bg-blue-100 text-blue-700"
+                              th:text="${pendingClaims.get(food.id).status}">PENDING</span>
+                    </span>
+                    <span th:if="${pendingClaims.get(food.id)} == null" class="text-gray-400">—</span>
+                </td>
+
                 <td th:text="${food.expiryDate}" class="px-6 py-4 whitespace-nowrap text-sm text-red-500">2025-12-31</td>
 
-                <!-- Actions column with dynamic status -->
+                <!-- Actions column: driven by the Claim's own status, not raw food status -->
                 <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                    <div th:switch="${food.status}">
-                        <!-- Claimed status: Accept/Decline buttons -->
-                        <span th:case="'CLAIMED'">
-                            <form th:action="@{/admin/food/status/{id}(id=${food.id})}" method="post" class="inline-block mr-2">
-                                <input type="hidden" name="action" value="ACCEPT"/>
-                                <button type="submit" class="bg-food-green text-white px-2 py-1 rounded-md text-xs hover:bg-green-700">Accept</button>
-                            </form>
+                    <!-- Pending claim: Approve/Reject buttons -->
+                    <span th:if="${pendingClaims.get(food.id)} != null">
+                        <form th:action="@{/admin/food/status/{id}(id=${food.id})}" method="post" class="inline-block mr-2">
+                            <input type="hidden" name="action" value="ACCEPT"/>
+                            <button type="submit" class="bg-food-green text-white px-2 py-1 rounded-md text-xs hover:bg-green-700">Approve</button>
+                        </form>
 
-                            <form th:action="@{/admin/food/status/{id}(id=${food.id})}" method="post" class="inline-block">
-                                <input type="hidden" name="action" value="DECLINE"/>
-                                <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded-md text-xs hover:bg-red-700">Decline</button>
-                            </form>
-                        </span>
+                        <form th:action="@{/admin/food/status/{id}(id=${food.id})}" method="post" class="inline-block">
+                            <input type="hidden" name="action" value="DECLINE"/>
+                            <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded-md text-xs hover:bg-red-700">Reject</button>
+                        </form>
+                    </span>
 
-                        <!-- Available status: Edit/Close Listing links -->
+                    <!-- No pending claim: buttons are gone, only the final state is shown -->
+                    <div th:if="${pendingClaims.get(food.id)} == null" th:switch="${food.status}">
+                        <!-- Available status: Edit/Close Listing links (covers a relisted item after rejection) -->
                         <span th:case="'AVAILABLE'">
                             <a th:href="@{/admin/food/edit/{id}(id=${food.id})}" class="text-blue-600 hover:text-blue-900 mr-3">Edit</a>
                             <a th:href="@{/admin/food/close/{id}(id=${food.id})}" class="text-red-500 hover:text-red-700">Close Listing</a>
                         </span>
 
-                        <!-- Any other status: just display status -->
+                        <!-- Any other status (e.g. DONATED after approval): just display the final status -->
                         <span th:case="*">
                             <span class="text-gray-400" th:text="${food.status}"></span>
                         </span>
@@ -90,7 +110,7 @@
             </tr>
 
             <tr th:if="${#lists.isEmpty(foods)}">
-                <td colspan="5" class="px-6 py-4 text-center text-gray-500">No active food listings found.</td>
+                <td colspan="7" class="px-6 py-4 text-center text-gray-500">No active food listings found.</td>
             </tr>
             </tbody>
         </table>
@@ -101,4 +121,4 @@
     </div>
 </main>
 </body>
-</html> 
+</html>

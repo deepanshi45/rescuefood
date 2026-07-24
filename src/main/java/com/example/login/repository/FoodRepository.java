@@ -41,6 +41,24 @@ public interface FoodRepository extends JpaRepository<Fooditem, Long> {
     List<Fooditem> findByDescriptionContainingIgnoreCase(String keyword);
     List<Fooditem> findByDescriptionContainingIgnoreCaseOrLocationContainingIgnoreCase(String query, String query1);
 
+    // --- 🔹 Explore page search (by food name and/or category) ---
+    // Both filters are optional and independent: pass null to skip a filter,
+    // or supply both to combine them (AND).
+    @Query("""
+        SELECT f FROM Fooditem f
+        WHERE f.status = :status
+          AND f.expiryDate >= :currentDate
+          AND (:keyword IS NULL OR LOWER(f.title) LIKE LOWER(CONCAT('%', :keyword, '%')))
+          AND (:category IS NULL OR f.category = :category)
+        ORDER BY f.createdAt DESC
+    """)
+    List<Fooditem> searchAvailableFood(
+            @Param("status") FoodStatus status,
+            @Param("currentDate") LocalDate currentDate,
+            @Param("keyword") String keyword,
+            @Param("category") FoodCategory category
+    );
+
     // --- 🔹 Analytics & Statistics ---
     @Query("SELECT COUNT(f) FROM Fooditem f")
     Long getTotalFoodItems();

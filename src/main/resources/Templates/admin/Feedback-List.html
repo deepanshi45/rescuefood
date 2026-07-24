@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - All Feedback</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .bg-food-green { background-color: #16A34A; }
+        .text-food-dark { color: #14532D; }
+        .bg-food-light { background-color: #DCFCE7; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-poppins">
+
+<header class="bg-white shadow-md p-4 flex justify-between items-center sticky top-0 z-10">
+    <h1 class="text-2xl font-bold text-food-dark">User Feedback</h1>
+    <a th:href="@{/admin/dashboard}" class="text-gray-500 hover:text-food-dark transition">← Back to Dashboard</a>
+</header>
+
+<main class="container mx-auto mt-8 p-6 bg-white rounded-lg shadow-xl">
+    <h2 class="text-3xl font-bold text-food-dark mb-6 border-b pb-2">All Submitted Feedback</h2>
+
+    <div th:if="${feedbacks == null or feedbacks.isEmpty()}" class="p-4 bg-yellow-100 text-yellow-700 rounded-lg text-center">
+        No feedback has been submitted yet.
+    </div>
+
+    <div th:unless="${feedbacks == null or feedbacks.isEmpty()}" class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-food-light">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-food-dark uppercase tracking-wider">User</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-food-dark uppercase tracking-wider">Message</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-food-dark uppercase tracking-wider">Status</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-food-dark uppercase tracking-wider">Submitted On</th>
+            </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+            <tr th:each="fb : ${feedbacks}">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <span th:text="${userNames.get(fb.userId)} ?: ('User #' + ${fb.userId})">Jane Doe</span>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-700 max-w-md" th:text="${fb.message}">Feedback message goes here.</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-block px-2 py-1 text-xs font-semibold uppercase rounded-full bg-blue-100 text-blue-700"
+                          th:text="${fb.status}">PENDING</span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" th:text="${#temporals.format(fb.createdAt, 'dd MMM yyyy, hh:mm a')}">
+                    01 Jan 2026
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

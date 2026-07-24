@@ -1,3 +1,65 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Feedback & Support</title>-->
+<!--    <script src="https://cdn.tailwindcss.com"></script>-->
+<!--    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">-->
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">-->
+<!--    <style> .font-poppins { font-family: 'Poppins', sans-serif; } </style>-->
+<!--</head>-->
+<!--<body class="bg-gray-100 min-h-screen font-poppins">-->
+
+<!--<header class="bg-white shadow-md p-4 flex justify-between items-center">-->
+<!--    <h1 class="text-2xl font-bold text-purple-600">Feedback & Support</h1>-->
+<!--    <a th:href="@{/user/homepage}" class="text-gray-500 hover:text-purple-600"><i class="bi bi-arrow-left"></i> Back to Home</a>-->
+<!--</header>-->
+
+<!--<main class="container mx-auto p-4 md:p-8">-->
+<!--    <div class="max-w-xl mx-auto bg-white p-8 rounded-xl shadow-2xl border-t-4 border-purple-500">-->
+
+<!--        <div class="text-center mb-6">-->
+<!--            <i class="bi bi-chat-dots text-6xl text-purple-500"></i>-->
+<!--            <h2 class="text-3xl font-bold text-gray-800 mt-3">Tell Us What You Think</h2>-->
+<!--            <p class="text-gray-500">Your feedback helps us rescue more food effectively.</p>-->
+<!--        </div>-->
+
+<!--        <form th:action="@{/user/submitFeedback}" method="post" class="space-y-6">-->
+
+<!--            <div>-->
+<!--                <label for="name" class="block text-sm font-medium text-gray-700">Your Name</label>-->
+<!--                <input type="text" id="name" name="name" th:value="${#authentication.principal.username}" required class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500">-->
+<!--            </div>-->
+
+<!--            <div>-->
+<!--                <label for="rating" class="block text-sm font-medium text-gray-700">Overall Rating</label>-->
+<!--                <select id="rating" name="rating" required class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500">-->
+<!--                    <option value="">&#45;&#45; Select Rating &#45;&#45;</option>-->
+<!--                    <option value="5">⭐⭐⭐⭐⭐ Excellent</option>-->
+<!--                    <option value="4">⭐⭐⭐⭐ Good</option>-->
+<!--                    <option value="3">⭐⭐⭐ Average</option>-->
+<!--                    <option value="2">⭐⭐ Poor</option>-->
+<!--                    <option value="1">⭐ Very Poor</option>-->
+<!--                </select>-->
+<!--            </div>-->
+
+<!--            <div>-->
+<!--                <label for="message" class="block text-sm font-medium text-gray-700">Message/Issue Description</label>-->
+<!--                <textarea id="message" name="message" rows="4" required class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"></textarea>-->
+<!--            </div>-->
+
+<!--            <button type="submit" class="w-full bg-purple-500 text-white px-5 py-3 rounded-lg text-lg font-bold hover:bg-purple-600 transition shadow-lg-green">-->
+<!--                Submit Feedback <i class="bi bi-send"></i>-->
+<!--            </button>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--</main>-->
+<!--</body>-->
+<!--</html>-->
+
+
+
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -25,34 +87,34 @@
             <p class="text-gray-500">Your feedback helps us rescue more food effectively.</p>
         </div>
 
-        <form th:action="@{/user/submitFeedback}" method="post" class="space-y-6">
+        <div th:if="${success}" class="mb-6 p-4 bg-green-100 text-green-700 rounded-lg text-center" th:text="${success}">
+            Success message
+        </div>
+        <div th:if="${error}" class="mb-6 p-4 bg-red-100 text-red-700 rounded-lg text-center" th:text="${error}">
+            Error message
+        </div>
 
-            <div>
-                <label for="name" class="block text-sm font-medium text-gray-700">Your Name</label>
-                <input type="text" id="name" name="name" th:value="${#authentication.principal.username}" required class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500">
-            </div>
-
-            <div>
-                <label for="rating" class="block text-sm font-medium text-gray-700">Overall Rating</label>
-                <select id="rating" name="rating" required class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500">
-                    <option value="">-- Select Rating --</option>
-                    <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
-                    <option value="4">⭐⭐⭐⭐ Good</option>
-                    <option value="3">⭐⭐⭐ Average</option>
-                    <option value="2">⭐⭐ Poor</option>
-                    <option value="1">⭐ Very Poor</option>
-                </select>
-            </div>
+        <form th:action="@{/feedback}" th:object="${feedbackDTO}" method="post" class="space-y-6">
 
             <div>
                 <label for="message" class="block text-sm font-medium text-gray-700">Message/Issue Description</label>
-                <textarea id="message" name="message" rows="4" required class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"></textarea>
+                <textarea id="message" th:field="*{message}" rows="5" required
+                          class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"></textarea>
+                <p th:if="${#fields.hasErrors('message')}" th:errors="*{message}" class="mt-1 text-sm text-red-600">
+                    Validation error
+                </p>
             </div>
 
             <button type="submit" class="w-full bg-purple-500 text-white px-5 py-3 rounded-lg text-lg font-bold hover:bg-purple-600 transition shadow-lg-green">
                 Submit Feedback <i class="bi bi-send"></i>
             </button>
         </form>
+
+        <div class="text-center mt-6">
+            <a th:href="@{/feedback/user/view}" class="text-sm text-purple-600 hover:text-purple-800 font-medium">
+                View My Feedback History <i class="bi bi-clock-history"></i>
+            </a>
+        </div>
     </div>
 </main>
 </body>

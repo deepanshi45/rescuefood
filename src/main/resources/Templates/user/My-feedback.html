@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Feedback History</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style> .font-poppins { font-family: 'Poppins', sans-serif; } </style>
+</head>
+<body class="bg-gray-100 min-h-screen font-poppins">
+
+<header class="bg-white shadow-md p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-purple-600">My Feedback History</h1>
+    <a th:href="@{/user/homepage}" class="text-gray-500 hover:text-purple-600"><i class="bi bi-arrow-left"></i> Back to Home</a>
+</header>
+
+<main class="container mx-auto p-4 md:p-8">
+    <div class="max-w-2xl mx-auto">
+
+        <div th:if="${#lists.isEmpty(feedbacks)}" class="p-8 bg-blue-100 text-blue-700 rounded-lg text-center">
+            You haven't submitted any feedback yet.
+        </div>
+
+        <div th:unless="${#lists.isEmpty(feedbacks)}" class="space-y-4">
+            <div th:each="fb : ${feedbacks}" class="bg-white p-5 rounded-xl shadow-lg">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="inline-block px-2 py-1 text-xs font-semibold uppercase rounded-full bg-blue-100 text-blue-700"
+                          th:text="${fb.status}">PENDING</span>
+                    <span class="text-xs text-gray-400" th:text="${#temporals.format(fb.createdAt, 'dd MMM yyyy, hh:mm a')}">
+                        01 Jan 2026
+                    </span>
+                </div>
+                <p class="text-gray-800" th:text="${fb.message}">Feedback message goes here.</p>
+            </div>
+        </div>
+
+        <div class="text-center mt-6">
+            <a th:href="@{/feedback}" class="inline-block bg-purple-500 text-white px-5 py-2 rounded-lg font-medium hover:bg-purple-600 transition">
+                <i class="bi bi-plus-circle mr-2"></i> Submit New Feedback
+            </a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

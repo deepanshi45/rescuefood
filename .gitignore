@@ -1,5 +1,8 @@
 HELP.md
 target/
+
+### Uploaded food images (runtime data, not source) ###
+/uploads/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

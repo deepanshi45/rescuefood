@@ -21,47 +21,55 @@
 <main class="container mx-auto p-4 md:p-8">
 
     <div class="max-w-4xl mx-auto">
-        <h2 class="text-3xl font-semibold text-gray-800 mb-6 border-b pb-2">Recent Orders</h2>
+        <h2 class="text-3xl font-semibold text-gray-800 mb-6 border-b pb-2">Claim History</h2>
 
         <div th:fragment="status-tag(status)">
-            <span th:class="${status == 'DONATED'}
+            <span th:class="${status == 'APPROVED'}
                        ? 'inline-block px-3 py-1 text-xs font-semibold rounded-full uppercase bg-green-100 text-green-700'
-                       : ( ${status == 'CLAIMED'}
+                       : ( ${status == 'PENDING'}
                            ? 'inline-block px-3 py-1 text-xs font-semibold rounded-full uppercase bg-blue-100 text-blue-700'
                            : 'inline-block px-3 py-1 text-xs font-semibold rounded-full uppercase bg-red-100 text-red-700' )"
-                  th:text="${status}">CLAIMED</span>
+                  th:text="${status}">PENDING</span>
         </div>
 
-        <div th:if="${#lists.isEmpty(orders)}" class="p-8 bg-blue-100 text-blue-700 rounded-lg text-center">
+        <div th:if="${#lists.isEmpty(claims)}" class="p-8 bg-blue-100 text-blue-700 rounded-lg text-center">
             You haven't claimed any food yet. Explore the available items!
         </div>
 
-        <div th:unless="${#lists.isEmpty(orders)}" class="space-y-6">
-            <div th:each="order : ${orders}"
+        <div th:unless="${#lists.isEmpty(claims)}" class="space-y-6">
+            <div th:each="claim : ${claims}"
                  class="bg-white p-5 rounded-xl shadow-lg flex justify-between items-start transition duration-300 hover:shadow-xl">
 
-                <div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-1" th:text="${order.title}">Food Item Title</h3>
+                <div class="flex gap-4">
+                    <img th:if="${claim.foodItem.images != null and !claim.foodItem.images.isEmpty()}"
+                         th:src="@{${claim.foodItem.images[0]}}" alt="Food Image"
+                         class="w-20 h-20 object-cover rounded-lg flex-shrink-0">
+                    <div th:unless="${claim.foodItem.images != null and !claim.foodItem.images.isEmpty()}"
+                         class="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-xs flex-shrink-0">
+                        No Image
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-1" th:text="${claim.foodItem.title}">Food Item Title</h3>
 
-                    <p class="text-sm text-gray-500 mb-2">Item ID: <span th:text="${order.id}">#87654</span></p>
+                        <p class="text-sm text-gray-500 mb-2">Item ID: <span th:text="${claim.foodItem.id}">#87654</span></p>
 
-                    <p class="text-sm text-gray-700">
-                        Quantity: <span th:text="${order.quantity}">5</span>
-                        <span th:text="${order.unit}">kg</span>
-                    </p>
+                        <p class="text-sm text-gray-700">
+                            Quantity: <span th:text="${claim.foodItem.quantity}">5</span>
+                            <span th:text="${claim.foodItem.unit}">kg</span>
+                        </p>
 
-                    <p class="text-sm text-gray-700">
-                        Pickup Location: <span th:text="${order.location}">Central Hotel</span>
-                    </p>
+                        <p class="text-sm text-gray-700">
+                            Pickup Location: <span th:text="${claim.foodItem.location}">Central Hotel</span>
+                        </p>
+
+                        <p class="text-xs text-gray-400 mt-2">
+                            Claimed on <span th:text="${#temporals.format(claim.claimedAt, 'dd MMM yyyy, hh:mm a')}">01 Jan 2026</span>
+                        </p>
+                    </div>
                 </div>
 
                 <div class="text-right">
-                    <div th:replace="~{::status-tag(status=${order.status})}" class="mb-3"></div>
-
-                    <a th:href="@{/user/order/details/{id}(id=${order.id})}"
-                       class="text-sm text-blue-500 hover:text-blue-700 font-medium block">
-                        View Details <i class="bi bi-chevron-right"></i>
-                    </a>
+                    <div th:replace="~{::status-tag(status=${claim.status})}" class="mb-3"></div>
                 </div>
 
             </div>

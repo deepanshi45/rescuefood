@@ -22,8 +22,8 @@
 
     <div class="text-center mb-6">
       <i class="bi bi-person-circle text-6xl text-blue-500"></i>
-      <h2 class="text-3xl font-bold text-gray-800 mt-3">Jane Doe (Placeholder)</h2>
-      <p class="text-gray-500">Standard User</p>
+      <h2 class="text-3xl font-bold text-gray-800 mt-3" th:text="${user.name}">Jane Doe</h2>
+      <p class="text-gray-500">@<span th:text="${user.username}">username</span></p>
     </div>
 
     <div class="space-y-4">
@@ -31,7 +31,7 @@
         <i class="bi bi-envelope text-xl text-blue-600 mr-4"></i>
         <div>
           <p class="text-sm font-medium text-gray-500">Email Address</p>
-          <p class="text-lg font-semibold text-gray-800">jane.doe@example.com</p>
+          <p class="text-lg font-semibold text-gray-800" th:text="${user.email}">jane.doe@example.com</p>
         </div>
       </div>
 
@@ -39,7 +39,7 @@
         <i class="bi bi-telephone text-xl text-blue-600 mr-4"></i>
         <div>
           <p class="text-sm font-medium text-gray-500">Phone Number</p>
-          <p class="text-lg font-semibold text-gray-800">+91 98765 43210</p>
+          <p class="text-lg font-semibold text-gray-800" th:text="${user.phone != null and !user.phone.isEmpty()} ? ${user.phone} : 'Not provided'">+91 98765 43210</p>
         </div>
       </div>
 
@@ -47,7 +47,7 @@
         <i class="bi bi-geo-alt text-xl text-blue-600 mr-4"></i>
         <div>
           <p class="text-sm font-medium text-gray-500">Primary Location</p>
-          <p class="text-lg font-semibold text-gray-800">New Delhi, India</p>
+          <p class="text-lg font-semibold text-gray-800" th:text="${user.address != null and !user.address.isEmpty()} ? ${user.address} : 'Not provided'">New Delhi, India</p>
         </div>
       </div>
     </div>

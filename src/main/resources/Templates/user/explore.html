@@ -20,12 +20,12 @@
 
     <form th:action="@{/user/explore}" method="get" class="bg-white p-6 rounded-xl shadow-lg mb-8">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <input type="text" name="keyword" placeholder="Search item or location..." class="col-span-2 p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+            <input type="text" name="keyword" th:value="${keyword}" placeholder="Search by food name..." class="col-span-2 p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
             <select name="category" class="p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
-                <option value="">All Categories</option>
-                <option value="BAKERY">Bakery</option>
-                <option value="FRUITS">Fruits & Veg</option>
-                <option value="OTHER">Other</option>
+                <option value="" th:selected="${category == null or category.isEmpty()}">All Categories</option>
+                <option value="BAKERY" th:selected="${category == 'BAKERY'}">Bakery</option>
+                <option value="FRUITS" th:selected="${category == 'FRUITS'}">Fruits & Veg</option>
+                <option value="OTHER" th:selected="${category == 'OTHER'}">Other</option>
             </select>
             <button type="submit" class="bg-green-500 text-white font-semibold py-3 rounded-lg hover:bg-green-600 transition">
                 <i class="bi bi-search mr-2"></i> Search
@@ -34,12 +34,22 @@
     </form>
 
     <div th:if="${#lists.isEmpty(foods)}" class="p-8 bg-yellow-100 text-yellow-700 rounded-lg text-center">
-        No food items are available right now. Please check back later!
+        <span th:if="${(keyword != null and !keyword.isEmpty()) or (category != null and !category.isEmpty())}">
+            No results found. Try a different food name or category.
+        </span>
+        <span th:unless="${(keyword != null and !keyword.isEmpty()) or (category != null and !category.isEmpty())}">
+            No food items are available right now. Please check back later!
+        </span>
     </div>
 
     <div th:unless="${#lists.isEmpty(foods)}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div th:each="food : ${foods}" class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-[1.02] transition duration-300">
-            <img th:src="@{/images/{id}(id=${food.id})}" alt="Food Image" class="w-full h-48 object-cover">
+            <img th:if="${food.images != null and !food.images.isEmpty()}"
+                 th:src="@{${food.images[0]}}" alt="Food Image" class="w-full h-48 object-cover">
+            <div th:unless="${food.images != null and !food.images.isEmpty()}"
+                 class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-400">
+                <i class="bi bi-image text-4xl"></i>
+            </div>
             <div class="p-5">
                 <h3 class="text-xl font-bold text-green-600 mb-2" th:text="${food.title}">5KG Fresh Bread Loaves</h3>
                 <p class="text-gray-600 text-sm mb-3" th:text="${food.description}">Surplus from morning bake. Ready for immediate pickup.</p>
